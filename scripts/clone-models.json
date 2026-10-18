@@ -1,0 +1,91 @@
+{
+  "qwen_revision": "1cd86afb9a95c410a6038ab3b40d8b578c892266",
+  "llama_release": "b11100",
+  "quality_python_dependencies": {
+    "version": "1.0.0-win-py312",
+    "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/quality-python/1.0.0/clone-quality-python-1.0.0-win-py312.zip"],
+    "size": 24055077,
+    "sha256": "e73ecdcac9c13e386dbef4b44c786390b6b7cd7d806a18d963f2abda5a0cee79"
+  },
+  "tracking_python_source": {
+    "version": "sam2-2b90b9f5-minimal1",
+    "root": "sam2-2b90b9f5ceec907a1c18123530e92e794ad901a4",
+    "urls": ["https://github.com/facebookresearch/sam2/archive/2b90b9f5ceec907a1c18123530e92e794ad901a4.zip"],
+    "size": 55952852,
+    "sha256": "fe93082a71a885a427894b1eab76341768781b6b58a298a0717e03862097d137"
+  },
+  "models": {
+    "qwen/mmproj.gguf": {
+      "urls": ["https://modelscope.cn/models/lmstudio-community/Qwen3-VL-4B-Instruct-GGUF/resolve/master/mmproj-Qwen3-VL-4B-Instruct-F16.gguf", "https://hf-mirror.com/lmstudio-community/Qwen3-VL-4B-Instruct-GGUF/resolve/9eaf9988fe9b5e33541dc614622c36d5e90dd509/mmproj-Qwen3-VL-4B-Instruct-F16.gguf", "https://huggingface.co/lmstudio-community/Qwen3-VL-4B-Instruct-GGUF/resolve/9eaf9988fe9b5e33541dc614622c36d5e90dd509/mmproj-Qwen3-VL-4B-Instruct-F16.gguf"],
+      "size": 836180160,
+      "sha256": "1b70e983d69dd424eb16e0ed2104d0b2a58bf01d866657f4de5da6c963620f19"
+    },
+    "qwen/Qwen3-VL-4B-Q4_K_M.gguf": {
+      "urls": ["https://modelscope.cn/models/Qwen/Qwen3-VL-4B-Instruct-GGUF/resolve/master/Qwen3VL-4B-Instruct-Q4_K_M.gguf", "https://hf-mirror.com/Qwen/Qwen3-VL-4B-Instruct-GGUF/resolve/1cd86afb9a95c410a6038ab3b40d8b578c892266/Qwen3VL-4B-Instruct-Q4_K_M.gguf", "https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct-GGUF/resolve/1cd86afb9a95c410a6038ab3b40d8b578c892266/Qwen3VL-4B-Instruct-Q4_K_M.gguf"],
+      "size": 2497281664,
+      "sha256": "66358cb18bb6b3b1b6675aa412c7a88ef01d228f481184d13668e5201c730a0a"
+    },
+    "upscale/RealESRGAN_x2plus.pth": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/RealESRGAN_x2plus.pth"],
+      "size": 67061725,
+      "sha256": "49fafd45f8fd7aa8d31ab2a22d14d91b536c34494a5cfe31eb5d89c2fa266abb"
+    },
+    "tracking/sam2.1_hiera_tiny.pt": {
+      "urls": ["https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt"],
+      "size": 156008466,
+      "sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69"
+    },
+    "depth/person-mask/human_segmentation_pphumanseg_2023mar.onnx": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/shiyin-depth-lite-models/resolve/3b6ff0e8986bef30ce82c1d46e326a4e8b305e46/image-depth/human_segmentation_pphumanseg_2023mar.onnx"],
+      "size": 6163938,
+      "sha256": "552d8a984054e59b5d773d24b9b12022b22046ceb2bbc4c9aaeaceb36a9ddf24"
+    },
+    "depth/person-mask/quality-birefnet/BiRefNet_config.py": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/quality-birefnet/BiRefNet_config.py", "https://hf-mirror.com/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/BiRefNet_config.py", "https://huggingface.co/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/BiRefNet_config.py"],
+      "size": 298,
+      "sha256": "e7b8c2a74f6cea6a59553d517f71d47f2c1d90e670a13416af17c25fe2f3dc52"
+    },
+    "depth/person-mask/quality-birefnet/birefnet.py": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/quality-birefnet/birefnet.py", "https://hf-mirror.com/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/birefnet.py", "https://huggingface.co/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/birefnet.py"],
+      "size": 91896,
+      "sha256": "208771ae626f653d64128fbf2d6ac9f8e645c5cc5e286258a73ec3322bbfe5ef"
+    },
+    "depth/person-mask/quality-birefnet/config.json": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/quality-birefnet/config.json", "https://hf-mirror.com/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/config.json", "https://huggingface.co/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/config.json"],
+      "size": 405,
+      "sha256": "c97ea21569daf66b205491a4635147dd3bc42c7c168b89d7d75b53f67ef548ae"
+    },
+    "depth/person-mask/quality-birefnet/model.safetensors": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/quality-birefnet/model.safetensors", "https://hf-mirror.com/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/model.safetensors", "https://huggingface.co/ZhengPeng7/BiRefNet/resolve/e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4/model.safetensors"],
+      "size": 444473596,
+      "sha256": "9ab37426bf4de0567af6b5d21b16151357149139362e6e8992021b8ce356a154"
+    },
+    "depth/video-depth-anything-small/video_depth_anything_vits.pth": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/shiyin-depth-lite-models/resolve/a1a14f2b20152dd7f2978d32bea5cad74a5a6e02/video-depth/video_depth_anything_vits.pth"],
+      "size": 116440756,
+      "sha256": "13379300b739e659f076a59d52e9801bd8d38c541a7e71f73bbca4dcfb013609"
+    },
+    "depth/video-depth-anything-base/video_depth_anything_vitb.pth": {
+      "urls": ["https://modelscope.cn/models/depth-anything/Video-Depth-Anything-Base/resolve/master/video_depth_anything_vitb.pth"],
+      "size": 458247082,
+      "sha256": "775e578e8f9431ec0496514aa466bd0a1f67c28d0f518267809f35a43c04329b"
+    }
+  },
+  "llama_archives": {
+    "llama-b11100-bin-win-cuda-12.4-x64.zip": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/llama-b11100-bin-win-cuda-12.4-x64.zip"],
+      "size": 253776957,
+      "sha256": "2e6be5b2e74b8274729437e6bda6973213842b70e72a28e90284394b8e9b411b"
+    },
+    "cudart-llama-bin-win-cuda-12.4-x64.zip": {
+      "urls": ["https://modelscope.cn/models/jiangjiang419/minimaxh3/resolve/master/clone-deps/cudart-llama-bin-win-cuda-12.4-x64.zip"],
+      "size": 391443627,
+      "sha256": "8c79a9b226de4b3cacfd1f83d24f962d0773be79f1e7b75c6af4ded7e32ae1d6"
+    }
+  },
+  "reference_model": {
+    "urls": ["https://modelscope.cn/models/Comfy-Org/MiniMax-H3/resolve/master/diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors"],
+    "size": 20970379616,
+    "sha256": "9255f52b6677845ad238f20dfaafa94727053694127ab7f255c048f0f9365779"
+  }
+}

@@ -1,0 +1,24 @@
+#minimax-plan .show-mode-titlebar .titlebar{position:relative;z-index:60}
+#minimax-plan .platform-run-switch{display:flex;align-items:center;gap:8px;min-width:0}
+#minimax-plan .platform-run-switch[hidden],#minimax-plan .platform-run-switch .cloud-points[hidden]{display:none}
+#minimax-plan .platform-run-switch .cloud-points{min-width:0;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mm-green);background:var(--mm-field);border-color:color-mix(in srgb,var(--mm-green) 30%,var(--mm-line))}
+#minimax-plan .platform-run-options{display:flex;align-items:center;flex:none;gap:3px;padding:3px;border:1px solid var(--mm-line);border-radius:8px;background:var(--mm-field);box-shadow:0 8px 24px #0004}
+#minimax-plan .platform-run-options button{height:27px;min-width:54px;padding:0 9px;border:0;border-radius:5px;background:transparent;color:var(--mm-muted);font-size:11px;white-space:nowrap}
+#minimax-plan .platform-run-options button:hover{color:var(--mm-text);background:var(--mm-raised)}
+#minimax-plan .platform-run-options button:focus-visible{outline:2px solid var(--mm-green);outline-offset:1px}
+#minimax-plan .platform-run-options button.active{color:var(--mm-text);background:var(--mm-raised);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--mm-green) 35%,transparent),0 0 12px color-mix(in srgb,var(--mm-green) 20%,transparent)}
+#minimax-plan .platform-run-options button[data-run-mode="cloud"].active{animation:platform-glow 3s ease-in-out infinite}
+@keyframes platform-glow{50%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--mm-green) 65%,transparent),0 0 18px color-mix(in srgb,var(--mm-green) 40%,transparent)}}
+#minimax-plan .platform-shell{position:fixed;z-index:50;inset:0;width:100%;height:100%;border:0;background:var(--mm-bg)}
+#minimax-plan .app.show-mode-titlebar ~ .platform-shell:not([hidden]){top:var(--platform-titlebar-height,54px);height:calc(100% - var(--platform-titlebar-height,54px))}
+#minimax-plan .platform-shell[hidden]{display:none}
+#minimax-plan.platform-shell-active .app .dock{position:fixed;z-index:61}
+#minimax-plan.platform-recharge-active .app .dock{display:none}
+#minimax-plan.platform-recharge-active .app .titlebar{visibility:hidden}
+#minimax-plan.platform-recharge-active .app.show-mode-titlebar ~ .platform-shell:not([hidden]){top:0;height:100%}
+#minimax-plan .platform-cost-estimate{margin:6px 0 0;color:var(--mm-green);font-size:11px;line-height:1.5}
+@media(max-width:900px){#minimax-plan .platform-run-switch .cloud-points{max-width:120px}}
+@media (min-width:2000px) and (min-height:900px){#minimax-plan{--platform-titlebar-height:66px}}
+@media(max-width:700px){#minimax-plan .platform-run-switch .cloud-points{max-width:105px}#minimax-plan .platform-run-options button{min-width:0;padding:0 7px}#minimax-plan .titlebar .status{display:none}}
+@media(max-width:600px){#minimax-plan .brand-version,#minimax-plan .title-update-check{display:none}#minimax-plan .titlebar{padding:0 10px}#minimax-plan .title-actions{gap:4px}}
+@media(prefers-reduced-motion:reduce){#minimax-plan .platform-run-options button{animation:none!important}}

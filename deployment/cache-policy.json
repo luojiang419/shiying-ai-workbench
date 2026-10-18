@@ -1,0 +1,5 @@
+{
+  "threshold_gib": 3,
+  "target_gib": 2,
+  "min_age_seconds": 300
+}

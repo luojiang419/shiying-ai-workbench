@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>AI 助手配置 · 诗影 AI 工作台</title>
+<style>
+:root{font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:#edf3fa;background:#10151e;color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:42px 20px}main{max-width:680px;margin:auto}a{color:#a8e6cb}header{margin-bottom:30px}.brand{font-size:15px;color:#a8e6cb}h1{font-size:30px;margin:14px 0}p{color:#a2afc2;line-height:1.9;font-size:14px}.card{padding:28px;background:#18212e;border:1px solid #344154;border-radius:16px}label{display:block;font-size:14px;margin:22px 0 9px}input{width:100%;padding:13px;border:1px solid #435268;border-radius:8px;background:#111a26;color:#edf3fa;font:inherit}input:focus{outline:2px solid #a8e6cb;outline-offset:2px}button{margin-top:25px;padding:12px 22px;border:0;border-radius:8px;background:#a8e6cb;color:#15392d;font-weight:650;font:inherit;cursor:pointer}button:disabled{opacity:.5;cursor:wait}code{display:block;overflow-wrap:anywhere;padding:13px;background:#101823;border-radius:8px;font-size:12px;line-height:1.8}.status{margin-top:20px;color:#a8e6cb;line-height:1.8}.error{color:#ffb4aa}.footer{margin-top:25px;font-size:12px;color:#8294ab}.model{font-size:13px;color:#a8e6cb}.back{display:inline-block;margin-top:22px;text-decoration:none}small{color:#9cabc1;line-height:1.8;display:block;margin-top:9px}@media(max-width:500px){body{padding:25px 16px}.card{padding:21px}h1{font-size:25px}}
+</style></head><body><main><header><div class="brand">诗影 AI 工作台</div><h1>配置你的 AI 助手</h1><p>使用你自己的 DeepSeek Key 分析参考素材、优化视频与克隆指令。配置会保存在当前实例，服务重启后继续使用。</p></header>
+<section class="card"><div class="model">DeepSeek Flash · deepseek-flash</div><p id="configured">正在读取配置状态…</p><form id="form">
+<label for="admin">实例管理码</label><input id="admin" type="password" required autocomplete="off" placeholder="从当前 AutoDL 实例终端获取">
+<small>在当前实例的终端执行下面的命令，复制显示的管理码：</small>
+<code>cd /root/minimax-node &amp;&amp; venv/bin/python -m app.public_release admin-code</code>
+<label for="key">DeepSeek API Key</label><input id="key" type="password" required autocomplete="off" spellcheck="false" placeholder="输入你的 DeepSeek API Key">
+<small>接口地址固定为 https://api.deepseek.com/v1。保存前会发起一次 Flash 验证请求，调用费用由你的 DeepSeek 账户承担。</small>
+<button id="save" type="submit">验证并保存</button><div id="status" class="status" role="status"></div>
+</form></section><a class="back" href="/">返回工作台 →</a><p class="footer">当前公开版提供 H3 视频创作与人物克隆。Built with MiniMax H3。使用须遵守 <a href="/api/public-release/license" target="_blank" rel="noopener">MiniMax H3 许可与使用限制</a>。</p></main>
+<script>
+const $=id=>document.getElementById(id);
+fetch('/api/public-release',{cache:'no-store'}).then(r=>r.json()).then(d=>{$('configured').textContent=d.assistantConfigured?'已配置 Flash。如需更换 Key，请验证后保存。':'首次使用：请先配置 Flash，再开始克隆创作。';}).catch(()=>{$('configured').textContent='配置状态读取失败，请刷新重试。';});
+$('form').onsubmit=async event=>{event.preventDefault();$('save').disabled=true;$('status').className='status';$('status').textContent='正在验证 Flash，请稍候…';try{const response=await fetch('/api/public-release/assistant',{method:'POST',headers:{'Content-Type':'application/json','X-Shiying-Admin-Code':$('admin').value.trim()},body:JSON.stringify({apiKey:$('key').value.trim()})});const data=await response.json();if(!response.ok)throw Error(data.detail||'配置未成功，请重试');$('key').value='';$('admin').value='';$('configured').textContent='已配置 DeepSeek Flash';$('status').textContent='验证成功，已保存。现在可以返回工作台开始创作。';}catch(error){$('status').className='status error';$('status').textContent=error.message;}finally{$('save').disabled=false;}};
+</script></body></html>

@@ -1,0 +1,7 @@
+{
+  "database": "/var/lib/minimax-node-monitor/nodes.sqlite3",
+  "agent_key": "REPLACE_WITH_RANDOM_AGENT_KEY_AT_LEAST_32_CHARS",
+  "view_key": "REPLACE_WITH_DIFFERENT_RANDOM_VIEW_KEY_AT_LEAST_32_CHARS",
+  "offline_after": 60,
+  "public_dashboard": true
+}

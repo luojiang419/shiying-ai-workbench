@@ -1,0 +1,11 @@
+{
+  "monitor_url": "https://monitor.example.com:18443/api/heartbeat",
+  "agent_key": "REPLACE_WITH_RANDOM_AGENT_KEY_AT_LEAST_32_CHARS",
+  "family": "minimax-h3",
+  "name": "MiniMax H3",
+  "service_slot": 6008,
+  "public_port": 8443,
+  "public_scheme": "https",
+  "status_url": "http://127.0.0.1:7890/api/status",
+  "interval": 15
+}

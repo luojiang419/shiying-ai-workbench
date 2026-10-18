@@ -1,0 +1,7 @@
+{
+  "brand": "诗影 AI 工作台",
+  "edition": "video-clone",
+  "model": "MiniMax H3",
+  "assistant": "deepseek-flash",
+  "privateTelemetry": false
+}

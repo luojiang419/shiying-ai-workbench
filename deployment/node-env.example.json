@@ -1,0 +1,10 @@
+{
+  "MINIMAX_COMFY_DIR": "/root/minimax-comfy",
+  "MINIMAX_COMFY_INPUT_DIR": "/root/minimax-comfy/input",
+  "MINIMAX_COMFY_OUTPUT_DIR": "/root/minimax-comfy/output",
+  "MINIMAX_COMFY_HOST": "127.0.0.1",
+  "MINIMAX_COMFY_PORT": "8188",
+  "MINIMAX_WEB_HOST": "127.0.0.1",
+  "MINIMAX_WEB_PORT": "7890",
+  "MINIMAX_HIGH_RESOLUTION_PRESETS": "true"
+}

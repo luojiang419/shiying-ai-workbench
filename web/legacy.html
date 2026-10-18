@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MiniMax Studio · 创作工作台</title>
+    <link rel="stylesheet" href="/assets/styles.css?v=20261018-workbench" />
+    <link rel="stylesheet" href="/assets/workbench.css?v=20261018-workbench" />
+  <link rel="stylesheet" href="/assets/motion.css?v=20261018-web-navigation"><script src="/assets/motion.js?v=20261018-web-navigation" defer></script></head>
+  <body data-mobile-section="create" data-view="video">
+    <header class="studio-header">
+      <a class="studio-brand" href="/">MiniMax <span>Studio</span></a>
+      <nav class="studio-nav" aria-label="工作台导航">
+        <button type="button" data-view-target="video" aria-pressed="true">视频创作</button>
+        <a href="/image-studio/" aria-label="打开图片创作">图片创作</a>
+        <a href="/clone-center/" aria-label="打开克隆中心">克隆中心</a>
+        <button type="button" data-view-target="works" aria-pressed="false">作品管理</button>
+      </nav>
+      <span class="studio-header-note">创作工作台</span>
+    </header>
+    <main class="shell">
+      <section class="panel controls" data-mobile-section="create">
+        <div class="title-row">
+          <div>
+            <h1>视频创作</h1>
+            <p id="statusText">正在检测本地后端...</p>
+          </div>
+          <div class="title-actions">
+            <button id="clearInput" type="button">清空输入</button>
+            <button id="refreshStatus" title="刷新状态">刷新</button>
+          </div>
+        </div>
+
+        <div class="controls-content">
+        <section class="parameters-bar" aria-labelledby="parametersTitle" id="videoParameters">
+          <h2 id="parametersTitle">生成参数</h2>
+          <div class="grid">
+            <label>
+              <span>画幅比例</span>
+              <select id="aspect"></select>
+            </label>
+            <label for="resolutionSize">
+              <span>分辨率</span>
+              <select id="resolution" hidden aria-hidden="true" tabindex="-1"></select>
+              <select id="resolutionSize"></select>
+            </label>
+            <label>
+              <span>时长（秒）</span>
+              <input id="duration" type="number" min="1" max="15" step="0.5" value="2" />
+            </label>
+            <label>
+              <span>Steps</span>
+              <input id="steps" type="number" min="4" step="1" value="12" />
+            </label>
+            <label hidden>
+              <span>Seed</span>
+              <input id="seed" type="text" placeholder="留空随机" />
+            </label>
+          </div>
+        </section>
+
+        <div class="mode-tabs" role="group" aria-label="生成模式">
+          <button class="mode-tab active" type="button" data-mode="references">多参考素材</button>
+          <button class="mode-tab" type="button" data-mode="keyframes">首尾帧</button>
+        </div>
+
+        <div id="keyframePanel" class="upload-grid" hidden>
+          <div class="upload-field">
+            <span>首帧参考图</span>
+            <button id="firstUploadBox" class="upload-box" type="button" aria-label="选择首帧参考图">
+              <img id="firstPreview" alt="" hidden />
+              <span class="upload-placeholder">点击或拖入图片</span>
+            </button>
+            <button id="firstRemove" class="upload-remove" type="button" title="移除首帧参考图" hidden>移除</button>
+            <input id="firstFrame" class="file-input" type="file" accept="image/png,image/jpeg,image/webp" />
+          </div>
+          <div class="upload-field">
+            <span>尾帧参考图</span>
+            <button id="lastUploadBox" class="upload-box" type="button" aria-label="选择尾帧参考图">
+              <img id="lastPreview" alt="" hidden />
+              <span class="upload-placeholder">点击或拖入图片</span>
+            </button>
+            <button id="lastRemove" class="upload-remove" type="button" title="移除尾帧参考图" hidden>移除</button>
+            <input id="lastFrame" class="file-input" type="file" accept="image/png,image/jpeg,image/webp" />
+          </div>
+        </div>
+
+        <div id="referencePanel" class="reference-panel">
+          <section class="reference-group" aria-labelledby="referenceAssetTitle">
+            <div class="reference-group-head">
+              <strong id="referenceAssetTitle">参考素材</strong>
+              <div class="reference-group-actions">
+                <span>图片 9 / 视频 3 / 音频 3</span>
+                <button id="addReferenceAudio" class="secondary" type="button">添加音频</button>
+                <button id="addReferenceVideo" class="secondary" type="button">添加视频</button>
+                <button id="addReference" class="secondary" type="button">添加图片</button>
+              </div>
+            </div>
+            <div id="referenceGrid" class="reference-grid"></div>
+            <input id="referenceFiles" class="file-input" type="file" accept="image/png,image/jpeg,image/webp" multiple />
+            <input id="referenceVideoFiles" class="file-input" type="file" accept="video/mp4,video/quicktime,.mp4,.mov" multiple />
+            <input id="referenceAudioFiles" class="file-input" type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/aac,audio/flac,audio/ogg,.mp3,.wav,.m4a,.aac,.flac,.ogg" multiple />
+            <div class="reference-hints">
+              <p id="referenceHint" class="field-hint"><span class="hint-number">1</span><span class="hint-text">提示词中使用 &lt;Picture 1&gt;、&lt;Picture 2&gt; 引用图片。</span></p>
+              <p id="referenceVideoHint" class="field-hint"><span class="hint-number">2</span><span class="hint-text">视频支持 MP4、MOV，2–15 秒、单个不超过 50MB；使用 &lt;Video 1&gt; 引用。</span></p>
+              <p id="referenceAudioHint" class="field-hint"><span class="hint-number">3</span><span class="hint-text">支持 MP3、WAV、M4A、AAC、FLAC、OGG，单个不超过 50MB；使用 &lt;Audio 1&gt; 引用。</span></p>
+            </div>
+          </section>
+        </div>
+
+        <label class="prompt-editor">
+          <span>提示词</span>
+          <textarea id="prompt" rows="13" placeholder="描述画面、镜头、动作和音效。"></textarea>
+        </label>
+        <p id="promptOptimizeState" class="prompt-optimize-state" aria-live="polite">开始生成时会自动解析素材并优化为 H3 提示词</p>
+        <textarea id="compiledPrompt" hidden aria-hidden="true" tabindex="-1"></textarea>
+
+        </div>
+
+        <button id="generate" class="primary">开始生成</button>
+      </section>
+
+      <section class="panel preview-panel" data-mobile-section="output">
+        <div class="output-head">
+          <h2>输出</h2>
+          <span id="jobText">暂无任务</span>
+        </div>
+        <div class="wait-row">
+          <span id="timerText">等待生成中</span>
+          <span id="comfortText">低显存 H3 正在分段换入模型，页面可保持打开。</span>
+        </div>
+        <div class="stage">
+          <video id="video" controls playsinline hidden></video>
+          <span id="swipeFeedback" class="swipe-feedback" hidden aria-live="polite"></span>
+          <div id="emptyState">生成完成后，视频会显示在这里。</div>
+          <div id="waitingState" class="waiting-state" hidden aria-live="polite">
+            <span class="wait-spinner wait-spinner-large" aria-hidden="true"></span>
+            <strong id="stageStatus">等待生成中</strong>
+            <section class="generation-progress" aria-label="视频生成进度">
+              <div id="generationEta" class="generation-eta" hidden>
+                <strong data-eta-remaining></strong>
+                <span data-eta-clock></span>
+                <small data-eta-evidence hidden></small>
+              </div>
+              <div class="generation-progress-head">
+                <span id="generationPhaseText">步骤 1 / 6</span>
+                <span id="generationPhaseTime">等待开始</span>
+              </div>
+              <div id="generationProgressTrack" class="generation-progress-track is-indeterminate" role="progressbar" aria-label="当前阶段进度">
+                <i id="generationProgressBar"></i>
+              </div>
+              <span id="generationProgressLabel" class="generation-progress-label">等待 H3 接手任务</span>
+              <ol id="generationSteps" class="generation-steps">
+                <li data-progress-step="queue"><i></i><span><strong>进入队列</strong><small>安全等待执行资源</small></span></li>
+                <li data-progress-step="prompt"><i></i><span><strong>准备提示词</strong><small>按提交时的需求整理提示词</small></span></li>
+                <li data-progress-step="prepare"><i></i><span><strong>准备模型</strong><small>检查权重与生成参数</small></span></li>
+                <li data-progress-step="encode"><i></i><span><strong>理解素材</strong><small>编码画面、音频与提示词</small></span></li>
+                <li data-progress-step="sample"><i></i><span><strong>生成视频</strong><small>扩散采样并推进帧序列</small></span></li>
+                <li data-progress-step="decode"><i></i><span><strong>解码音画</strong><small>还原视频帧与音频</small></span></li>
+                <li data-progress-step="save"><i></i><span><strong>合成保存</strong><small>封装最终视频文件</small></span></li>
+              </ol>
+              <p id="generationDetail" class="generation-detail">正在等待生成任务进入执行队列。</p>
+              <p id="generationNext" class="generation-next">下一步：准备模型与素材</p>
+            </section>
+            <span id="waitTipText">正在等待 H3 接手任务，页面保持打开即可。</span>
+          </div>
+        </div>
+        <a id="download" class="download" hidden aria-hidden="true" tabindex="-1">下载视频</a>
+      </section>
+
+      <section class="panel task-panel" data-mobile-section="tasks" aria-label="生成任务">
+        <header class="task-head"><h2>生成任务 <span id="taskCount">0</span></h2><button id="toggleTasks" type="button" aria-expanded="true" aria-controls="taskList" aria-label="折叠生成任务">›</button></header>
+        <div id="taskList" class="task-list" aria-live="polite"><p class="work-meta">暂无生成任务</p></div>
+      </section>
+
+      <section class="panel works-panel" data-mobile-section="works">
+        <details class="resource-panel">
+          <summary>系统资源</summary>
+          <div class="resource-head">
+            <h2>系统资源</h2>
+            <span id="resourceUpdated">等待刷新</span>
+          </div>
+          <div id="resourceGrid" class="resource-grid">
+            <div class="resource-card">
+              <span>CPU</span>
+              <strong id="cpuUsage">--</strong>
+            </div>
+            <div class="resource-card">
+              <span>内存</span>
+              <strong id="memoryUsage">--</strong>
+            </div>
+            <div class="resource-card">
+              <span>磁盘</span>
+              <strong id="diskUsage">--</strong>
+            </div>
+            <div class="resource-card">
+              <span>GPU</span>
+              <strong id="gpuUsage">--</strong>
+            </div>
+          </div>
+        </details>
+
+        <div class="works-head">
+          <div class="works-title">
+            <h2>作品管理</h2>
+            <span id="worksSummary" class="works-summary" aria-live="polite">0 生成中 / 0 已完成</span>
+          </div>
+          <div class="works-head-actions">
+            <button id="showAllVideos" type="button" title="全屏查看全部视频">全部视频</button>
+            <button id="refreshWorks" type="button" title="刷新作品">刷新</button>
+          </div>
+        </div>
+        <div class="works-toolbar">
+          <div class="works-types" role="group" aria-label="作品类型"><button type="button" data-works-type="all" aria-pressed="true">全部</button><button type="button" data-works-type="video" aria-pressed="false">视频</button><button type="button" data-works-type="image" aria-pressed="false">图片</button></div>
+          <div class="works-search-wrap"><input id="worksSearch" type="search" maxlength="200" placeholder="搜索提示词、文件名或任务 ID" aria-label="搜索作品"><button id="clearWorksSearch" type="button" aria-label="清空搜索">×</button></div>
+          <select id="worksOrder" aria-label="作品排序"><option value="desc">最新优先</option><option value="asc">最早优先</option></select>
+        </div>
+        <p id="worksStatus" class="work-meta" role="status"></p>
+        <div id="works" class="works"></div>
+        <footer class="works-pagination"><label>每页 <select id="worksPageSize" aria-label="每页作品数"><option>12</option><option selected>24</option><option>48</option><option>100</option><option>200</option></select></label><span id="worksPageInfo" aria-live="polite"></span><button id="worksPrevious" type="button">上一页</button><button id="worksNext" type="button">下一页</button></footer>
+      </section>
+    </main>
+
+    <nav class="mobile-dock" aria-label="移动端功能区">
+      <button class="mobile-dock-button active" type="button" data-mobile-target="create" aria-pressed="true">
+        <span class="dock-icon dock-create" aria-hidden="true"></span>
+        <span>生成</span>
+      </button>
+      <button class="mobile-dock-button" type="button" data-mobile-target="output" aria-pressed="false">
+        <span class="dock-icon dock-output" aria-hidden="true"></span>
+        <span>输出</span>
+      </button>
+      <button class="mobile-dock-button" type="button" data-mobile-target="works" aria-pressed="false">
+        <span class="dock-icon dock-works" aria-hidden="true"></span>
+        <span>作品</span>
+      </button>
+      <button class="mobile-dock-button" type="button" data-mobile-target="tasks" aria-pressed="false"><span class="dock-icon dock-works" aria-hidden="true"></span><span>任务</span></button>
+      <a class="mobile-dock-button mobile-dock-link" href="/image-studio/" aria-label="打开图片创作"><span class="dock-icon dock-output" aria-hidden="true"></span><span>图片</span></a>
+      <a class="mobile-dock-button mobile-dock-link" href="/clone-center/" aria-label="打开克隆中心">
+        <span class="dock-icon dock-clone" aria-hidden="true"></span>
+        <span>克隆</span>
+      </a>
+    </nav>
+
+    <div id="workMenuLayer" class="work-menu-layer" hidden></div>
+    <div id="referenceHoverPreview" class="reference-hover-preview" role="tooltip" hidden></div>
+    <dialog id="workImageDialog" class="work-image-dialog" aria-label="图片作品预览">
+      <header><strong id="workImageTitle">图片预览</strong><div><button id="workImagePrevious" type="button" aria-label="上一张图片">←</button><button id="workImageNext" type="button" aria-label="下一张图片">→</button><button id="workImageZoom" type="button">放大</button><a id="workImageDownload" download>下载</a><button id="workImageEdit" type="button">重新编辑</button><button id="closeWorkImage" type="button" aria-label="关闭图片预览">×</button></div></header>
+      <div class="work-image-stage"><img id="workImage" alt="图片作品原图"></div>
+      <p id="workImagePrompt"></p>
+    </dialog>
+
+    <section id="allVideosModal" class="all-videos-modal" role="dialog" aria-modal="true" aria-labelledby="allVideosTitle" hidden>
+      <header class="all-videos-head">
+        <div>
+          <h2 id="allVideosTitle">全部视频</h2>
+          <span id="allVideosCount" class="all-videos-count">共 0 个视频</span>
+        </div>
+        <div class="all-videos-actions">
+          <div class="sort-switch" role="group" aria-label="视频显示顺序">
+            <button class="sort-button active" type="button" data-video-order="desc" aria-pressed="true">降序</button>
+            <button class="sort-button" type="button" data-video-order="asc" aria-pressed="false">顺序</button>
+          </div>
+          <button id="closeAllVideos" class="all-videos-close" type="button" aria-label="关闭全部视频">关闭</button>
+        </div>
+      </header>
+      <div id="allVideosContent" class="all-videos-content" tabindex="0" aria-label="全部视频列表">
+        <div class="all-videos-empty">正在读取视频...</div>
+      </div>
+    </section>
+
+    <script src="/assets/generation-eta.js?v=20261017-background-queue"></script>
+    <script type="module" src="/assets/app.js?v=20261018-workbench"></script>
+  </body>
+</html>

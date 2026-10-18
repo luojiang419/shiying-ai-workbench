@@ -1,0 +1,111 @@
+:root {
+  --motion-ease: cubic-bezier(.22,1,.36,1);
+  --motion-fast: 160ms;
+  --motion-normal: 240ms;
+  --motion-expand: 280ms;
+}
+
+/* 浮层保留退出绘制，hidden/open 及原有焦点语义仍由业务立即更新。 */
+:is(dialog:not(.image-dialog), .modal-layer, .workbench-update-modal, .modal-backdrop,
+    .task-menu-layer, .work-menu-layer, .all-videos-modal, .mention-menu,
+    .settings-search-results, .reference-hover-preview, #notice, #toast, .processing, section.progress, .motion-inline-alert) {
+  opacity: 1;
+  transition: opacity var(--motion-normal) var(--motion-ease),
+    display var(--motion-normal) allow-discrete, overlay var(--motion-normal) allow-discrete;
+}
+:is(dialog:not(.image-dialog), .mention-menu, .settings-search-results, .reference-hover-preview, #notice, #toast) {
+  translate: 0 0;
+  scale: 1;
+  transition: opacity var(--motion-normal) var(--motion-ease),
+    translate var(--motion-normal) var(--motion-ease), scale var(--motion-normal) var(--motion-ease),
+    display var(--motion-normal) allow-discrete, overlay var(--motion-normal) allow-discrete;
+}
+:is(dialog:not(.image-dialog):not([open]), .modal-layer:not(.open), .mention-menu:not(.open),
+    #toast:not(.visible), .workbench-update-modal[hidden], .modal-backdrop[hidden],
+    .task-menu-layer[hidden], .work-menu-layer[hidden], .all-videos-modal[hidden],
+    .settings-search-results[hidden], .reference-hover-preview[hidden], #notice[hidden],
+    #toast[hidden], .processing[hidden], section.progress[hidden], .motion-inline-alert:not(.visible)) {
+  opacity: 0;
+  pointer-events: none;
+}
+:is(dialog:not(.image-dialog):not([open]), .mention-menu:not(.open),
+    .settings-search-results[hidden], .reference-hover-preview[hidden], #notice[hidden], #toast:not(.visible)) {
+  translate: 0 6px;
+  scale: .985;
+}
+dialog:not(.image-dialog)::backdrop {
+  opacity: 1;
+  transition: opacity var(--motion-normal) var(--motion-ease),
+    display var(--motion-normal) allow-discrete, overlay var(--motion-normal) allow-discrete;
+}
+dialog:not(.image-dialog):not([open])::backdrop { opacity: 0; pointer-events: none; }
+.modal-layer > :is(.fullscreen-player, .prompt-content),
+.workbench-update-dialog, .modal-backdrop > .modal {
+  scale: 1;
+  translate: 0 0;
+  transition: scale var(--motion-normal) var(--motion-ease), translate var(--motion-normal) var(--motion-ease);
+}
+.modal-layer:not(.open) > :is(.fullscreen-player, .prompt-content) { scale: .985; translate: 0 8px; }
+
+@starting-style {
+  :is(dialog:not(.image-dialog)[open], .modal-layer.open, .workbench-update-modal, .modal-backdrop,
+      .task-menu-layer:not([hidden]), .work-menu-layer:not([hidden]), .all-videos-modal:not([hidden]),
+      .mention-menu.open, .settings-search-results:not([hidden]), .reference-hover-preview:not([hidden]),
+      #notice:not([hidden]), #toast.visible, .processing:not([hidden]), section.progress:not([hidden]), .motion-inline-alert.visible) { opacity: 0; }
+  :is(dialog:not(.image-dialog)[open], .mention-menu.open, .settings-search-results:not([hidden]),
+      .reference-hover-preview:not([hidden]), #notice:not([hidden]), #toast.visible) { translate: 0 6px; scale: .985; }
+  dialog:not(.image-dialog)[open]::backdrop { opacity: 0; }
+  .modal-layer.open > :is(.fullscreen-player, .prompt-content),
+  .workbench-update-dialog, .modal-backdrop > .modal { scale: .985; translate: 0 8px; }
+}
+
+/* details 的内容参与高度过渡，关闭时仍能绘制最后一段收起过程。 */
+@supports (interpolate-size: allow-keywords) {
+  details { interpolate-size: allow-keywords; }
+  details::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition: block-size var(--motion-expand) var(--motion-ease), opacity var(--motion-normal) var(--motion-ease),
+      content-visibility var(--motion-expand) allow-discrete;
+  }
+  details[open]::details-content { block-size: auto; opacity: 1; }
+  [data-motion-expand] {
+    interpolate-size: allow-keywords;
+    block-size: auto;
+    opacity: 1;
+    overflow: clip;
+    transition: block-size var(--motion-expand) var(--motion-ease), opacity var(--motion-normal) var(--motion-ease),
+      display var(--motion-expand) allow-discrete;
+  }
+  [data-motion-expand][hidden] { block-size: 0; opacity: 0; pointer-events: none; }
+  @starting-style { [data-motion-expand]:not([hidden]) { block-size: 0; opacity: 0; } }
+}
+:is(button, a, input, select, textarea, .panel, .rail, .dock, .task-menu-panel, .task-menu,
+    .floating-menu-panel, .settings-search-results, .mention-menu) { transition-timing-function: var(--motion-ease) !important; }
+
+html[data-motion-reduced="true"] *, html[data-motion-reduced="true"] *::before,
+html[data-motion-reduced="true"] *::after, html[data-motion-reduced="true"] dialog::backdrop {
+  transition-duration: 0ms !important;
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+}
+html[data-motion-reduced="true"] { --motion-fast: 0ms; --motion-normal: 0ms; --motion-expand: 0ms; }
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-fast: 0ms; --motion-normal: 0ms; --motion-expand: 0ms; }
+  *, *::before, *::after, dialog::backdrop {
+    transition-duration: 0ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* 独立 Web 页面之间的同源导航也使用浏览器原生淡入淡出。 */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: var(--motion-normal);
+  animation-timing-function: var(--motion-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}

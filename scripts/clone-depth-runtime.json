@@ -1,0 +1,256 @@
+{
+  "schema_version": 2,
+  "component": "video-depth-runtime",
+  "version": "1.0.0",
+  "enabled": true,
+  "release_status": "released",
+  "message": "深度视频运行时将在首次生成时按本机配置自动安装",
+  "license_notice": "运行时包含 PyTorch、TorchVision、FFmpeg 与 Video Depth Anything 推理源码；模型权重独立分发。",
+  "packages": [
+    {
+      "id": "runtime-windows-x86_64-cpu-part-001",
+      "size": 736410452,
+      "sha256": "38e248e4f4d994d3875717f5b6b88631199cd2b1149069a0de4355287767a7f3",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cpu-part-001.zip",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cpu-part-001.zip"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-001",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-001.bin",
+      "size": 500000000,
+      "sha256": "2088f0a552b6bc3875f57159d7a2d52472590d77459f24e0b2337a96cc0ef8f8",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-001.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-002",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-002.bin",
+      "size": 500000000,
+      "sha256": "61f09a611358d559d72968a320fc6d85445fdbc80fb1a5d527b157eecdccde34",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-002.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-003",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-003.bin",
+      "size": 500000000,
+      "sha256": "7f27cf27422c98e28979377d7a97e4e0b2a6ce75acb5bc7617ca6b4d09e10b17",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-003.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-004",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-004.bin",
+      "size": 500000000,
+      "sha256": "b097d17e61d0b9d2dbe7268bac941cd13302689ed04ec0241a86621734c43ecf",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-004.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-005",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-005.bin",
+      "size": 500000000,
+      "sha256": "656ee68d6c6eea72cbba2b40e74f14c9f1f2d0bf43572c62771d46f48ad1bfcf",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-005.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-006",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-006.bin",
+      "size": 500000000,
+      "sha256": "2972661b7d503e9429a7c33af43448b7fc10fd020fdd6446203fce09f77a33d8",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-006.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-007",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-007.bin",
+      "size": 500000000,
+      "sha256": "fbb6ad4189d2628bd3e09b7f5b461056a486b4c0167dc9ba17a959b19e778bd9",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-007.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-008",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-008.bin",
+      "size": 500000000,
+      "sha256": "b0ec85d4178e8100eab645b01c00ca914f19c584f5be215cf6b21ae89c0d8b85",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-008.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-009",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-009.bin",
+      "size": 500000000,
+      "sha256": "9fb1bca1545d06eeeaf17c2bfcbc12c20dbcfdc19c7495f4c71f88da0643532f",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-009.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-010",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-010.bin",
+      "size": 500000000,
+      "sha256": "3d1224d7181b6eda5ac20c56b3049388a0e4940735a9c0fd4c5e72ad08752c1b",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-010.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda128-chunk-011",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-011.bin",
+      "size": 306028174,
+      "sha256": "49e912409a48c1630b33ab845610fd9be130c4bbb1e6a10c7d10c3616c413bca",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda128-chunk-011.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-001",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-001.bin",
+      "size": 500000000,
+      "sha256": "3ec002747f149e3cf314f377f193cd7888543215e20cf9d7c1270a41dc76fec4",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-001.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-002",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-002.bin",
+      "size": 500000000,
+      "sha256": "ef56d9e95a8c11a1c61a340ccec65abac4b38388a7f7fa181b92c828fe2230cf",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-002.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-003",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-003.bin",
+      "size": 500000000,
+      "sha256": "f262dfd14e9d65f4478db9d6096510d9106a181cf94197aa7a280c3f593a5fe5",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-003.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-004",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-004.bin",
+      "size": 500000000,
+      "sha256": "68ee8fa9bb2ef5e8cc58ac13fa0bac36db8b409dcde183ea6b8bd6ebb6f9324b",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-004.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-005",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-005.bin",
+      "size": 500000000,
+      "sha256": "0c39652c3a8deafd50c6fa47cac1177fc0616f886b967fff48c02102af42d5dd",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-005.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-006",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-006.bin",
+      "size": 500000000,
+      "sha256": "13be73fcf50990c62244ecc114819007d802fac67bd872030e6784e109ff8bdc",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-006.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-007",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-007.bin",
+      "size": 500000000,
+      "sha256": "c894c454591a6cf7998655c4ee24fae482c170fa4aad289cb791f6ebcfecadf1",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-007.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-008",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-008.bin",
+      "size": 500000000,
+      "sha256": "70563790cafa5354d38345cd79cbc290fe20ecba02598fb6fbec444f389af501",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-008.bin"
+    },
+    {
+      "id": "runtime-windows-x86_64-cuda126-chunk-009",
+      "file": "video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-009.bin",
+      "size": 317250474,
+      "sha256": "472f59b2134d6412e0960a20d0418bd0db6510f96ab7fe44e2a5e33b2160e3c4",
+      "domestic_url": "https://modelscope.cn/models/jiangjiang419/shiyin-video-depth-runtime/resolve/master/video-depth-runtime-1.0.0-windows-x86_64-cuda126-chunk-009.bin"
+    }
+  ],
+  "variants": [
+    {
+      "id": "windows-x86_64-cuda128",
+      "priority": 110,
+      "constraints": {
+        "os": "windows",
+        "arch": "x86_64",
+        "accelerator": "cuda",
+        "min_compute_capability": 12,
+        "min_gpu_memory_bytes": 4294967296,
+        "min_driver_version": "570.65"
+      },
+      "command": [
+        "runtime/video-depth-worker/video-depth-worker.exe"
+      ],
+      "required_paths": [
+        "runtime/video-depth-worker/video-depth-worker.exe",
+        "runtime/sources/video-depth-anything/video_depth_anything/video_depth.py",
+        "runtime/bin/ffmpeg.exe",
+        "runtime/bin/ffprobe.exe"
+      ],
+      "packages": [
+        "runtime-windows-x86_64-cuda128-chunk-001",
+        "runtime-windows-x86_64-cuda128-chunk-002",
+        "runtime-windows-x86_64-cuda128-chunk-003",
+        "runtime-windows-x86_64-cuda128-chunk-004",
+        "runtime-windows-x86_64-cuda128-chunk-005",
+        "runtime-windows-x86_64-cuda128-chunk-006",
+        "runtime-windows-x86_64-cuda128-chunk-007",
+        "runtime-windows-x86_64-cuda128-chunk-008",
+        "runtime-windows-x86_64-cuda128-chunk-009",
+        "runtime-windows-x86_64-cuda128-chunk-010",
+        "runtime-windows-x86_64-cuda128-chunk-011"
+      ],
+      "assemble_archive": {
+        "size": 5306028174,
+        "sha256": "58f0e2ae71e134ecbe13abe3bd24e281d2dd5216f047b7fdb86e7893f1514d57"
+      }
+    },
+    {
+      "id": "windows-x86_64-cuda126",
+      "priority": 100,
+      "constraints": {
+        "os": "windows",
+        "arch": "x86_64",
+        "accelerator": "cuda",
+        "min_compute_capability": 7,
+        "max_compute_capability": 9.9,
+        "min_gpu_memory_bytes": 4294967296,
+        "min_driver_version": "560.76"
+      },
+      "command": [
+        "runtime/video-depth-worker/video-depth-worker.exe"
+      ],
+      "required_paths": [
+        "runtime/video-depth-worker/video-depth-worker.exe",
+        "runtime/sources/video-depth-anything/video_depth_anything/video_depth.py",
+        "runtime/bin/ffmpeg.exe",
+        "runtime/bin/ffprobe.exe"
+      ],
+      "packages": [
+        "runtime-windows-x86_64-cuda126-chunk-001",
+        "runtime-windows-x86_64-cuda126-chunk-002",
+        "runtime-windows-x86_64-cuda126-chunk-003",
+        "runtime-windows-x86_64-cuda126-chunk-004",
+        "runtime-windows-x86_64-cuda126-chunk-005",
+        "runtime-windows-x86_64-cuda126-chunk-006",
+        "runtime-windows-x86_64-cuda126-chunk-007",
+        "runtime-windows-x86_64-cuda126-chunk-008",
+        "runtime-windows-x86_64-cuda126-chunk-009"
+      ],
+      "assemble_archive": {
+        "size": 4317250474,
+        "sha256": "77466d39c1f90ab0cb8e7b190b8658030dcaa87169abefc819601118314f424f"
+      }
+    },
+    {
+      "id": "windows-x86_64-cpu",
+      "priority": 10,
+      "constraints": {
+        "os": "windows",
+        "arch": "x86_64",
+        "accelerator": "cpu"
+      },
+      "command": [
+        "runtime/video-depth-worker/video-depth-worker.exe"
+      ],
+      "required_paths": [
+        "runtime/video-depth-worker/video-depth-worker.exe",
+        "runtime/sources/video-depth-anything/video_depth_anything/video_depth.py",
+        "runtime/bin/ffmpeg.exe",
+        "runtime/bin/ffprobe.exe"
+      ],
+      "packages": [
+        "runtime-windows-x86_64-cpu-part-001"
+      ]
+    }
+  ]
+}

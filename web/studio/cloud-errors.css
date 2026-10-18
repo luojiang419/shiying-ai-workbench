@@ -1,0 +1,8 @@
+/* 失败原因留在选中任务的预览区，不遮挡编辑器或抢占焦点。 */
+#minimax-plan .preview.is-failed .preview-copy{box-sizing:border-box;width:min(520px,94%);max-height:100%;overflow:hidden;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px}
+#minimax-plan .preview.is-failed .preview-message{display:block;min-height:0;max-height:min(42vh,360px);overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;text-align:left;user-select:text;cursor:text}
+#minimax-plan .preview.is-failed .play,#minimax-plan .preview.is-failed .preview-progress{display:none}
+#minimax-plan .preview-copy-error{padding:6px 12px;border:1px solid var(--mm-line);border-radius:5px;background:var(--mm-surface);color:var(--mm-muted);cursor:pointer;flex-shrink:0}
+#minimax-plan .preview-copy-error[hidden]{display:none}
+
+#minimax-plan .preview.is-cloud.is-loading .preview-copy .preview-sampling-label,#minimax-plan .preview.is-cloud.is-loading .preview-copy .preview-progress,#minimax-plan .preview.is-cloud.is-loading .preview-copy .preview-generation-stages{display:none}

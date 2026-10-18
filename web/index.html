@@ -1,0 +1,3868 @@
+<!doctype html><html lang="zh-CN"><head><base href="/assets/studio/"><link rel="stylesheet" href="./cloud-errors.css"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MiniMax Studio</title><link rel="stylesheet" href="./platform-mode.css"><style>html,body{width:100%;height:100%;margin:0;min-width:320px;min-height:520px;background:#1b1b1b;overflow:hidden}#minimax-plan{width:100%;height:100%}#minimax-plan .app{height:100dvh;min-height:520px;border-radius:0}
+  </style><link rel="stylesheet" href="./motion.css?v=20261018-web-navigation"><script src="./motion.js?v=20261018-web-navigation" defer></script><link rel="stylesheet" href="/assets/desktop-browser.css?v=20261018-web-settings"></head><body data-browser-workbench="true">
+<div id="minimax-plan" aria-label="MiniMax H3 一体化工作台">
+  <style>
+    #minimax-plan.reduce-motion *,
+    #minimax-plan.reduce-motion *:before,
+    #minimax-plan.reduce-motion *:after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+    #minimax-plan {
+      --mm-bg: #1b1b1b;
+      --mm-surface: #1e1f1f;
+      --mm-raised: #292928;
+      --mm-field: #1a1a1a;
+      --mm-line: rgba(255, 255, 255, 0.08);
+      --mm-text: #f0eee9;
+      --mm-muted: #a7a6a2;
+      --mm-faint: #777773;
+      --mm-accent: #30302f;
+      --mm-accent-text: #f0eee9;
+      --mm-quick-icon: #8cd9be;
+      --mm-canvas: #171717;
+      --mm-preview: #222222;
+      --mm-media-line: rgba(255, 255, 255, 0.12);
+      --mm-green: #79c99e;
+      --mm-amber: #e8bd72;
+      --mm-red: #e17b7b;
+      --mm-radius: 8px;
+      --mm-gap: 14px;
+      color-scheme: dark;
+      color: var(--mm-text);
+      font-family:
+        "Microsoft YaHei UI", "PingFang SC", Inter, system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+    #minimax-plan * {
+      box-sizing: border-box;
+      letter-spacing: 0;
+    }
+    #minimax-plan button,
+    #minimax-plan input,
+    #minimax-plan select,
+    #minimax-plan textarea {
+      font: inherit;
+    }
+    #minimax-plan input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    #minimax-plan select,
+    #minimax-plan textarea {
+      border: 1px solid var(--mm-line);
+      color: var(--mm-text);
+      background: var(--mm-field);
+      color-scheme: inherit;
+    }
+    #minimax-plan input::placeholder,
+    #minimax-plan textarea::placeholder {
+      color: var(--mm-faint);
+      opacity: 1;
+    }
+    #minimax-plan input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus-visible,
+    #minimax-plan select:focus-visible,
+    #minimax-plan textarea:focus-visible {
+      border-color: color-mix(in srgb, var(--mm-green) 68%, var(--mm-line));
+      outline: 2px solid color-mix(in srgb, var(--mm-green) 24%, transparent);
+      outline-offset: 1px;
+    }
+    #minimax-plan input[type="checkbox"],
+    #minimax-plan input[type="radio"],
+    #minimax-plan input[type="range"] {
+      accent-color: var(--mm-green);
+      color-scheme: inherit;
+    }
+    #minimax-plan button {
+      cursor: pointer;
+    }
+    #minimax-plan .app {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 520px;
+      overflow: hidden;
+      border: 1px solid var(--mm-line);
+      border-radius: var(--mm-radius);
+      background: var(--mm-bg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+    }
+    #minimax-plan .titlebar {
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--mm-line);
+      background: var(--mm-bg);
+    }
+    #minimax-plan .app:not(.show-mode-titlebar) .titlebar { display: none; }
+    #minimax-plan .app:not(.show-mode-titlebar) .page.active { flex: 1; }
+    #minimax-plan .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+    #minimax-plan .brand-mark {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--mm-accent);
+      border-radius: 50%;
+      font-size: 11px;
+    }
+    #minimax-plan .brand-version {
+      color: var(--mm-muted);
+      font-size: 10px;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    #minimax-plan .title-update-check {
+      position: relative;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      margin-left: -4px;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      color: var(--mm-muted);
+      background: transparent;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+    }
+    #minimax-plan .title-update-check svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #minimax-plan .title-update-check:hover,
+    #minimax-plan .title-update-check:focus-visible {
+      color: var(--mm-text);
+      border-color: var(--mm-line);
+      background: var(--mm-surface);
+      outline: none;
+    }
+    #minimax-plan .title-update-check:disabled { cursor: wait; }
+    #minimax-plan .title-update-check.is-checking svg { animation: mm-update-spin .9s linear infinite; }
+    #minimax-plan .title-update-check.has-update {
+      color: var(--mm-green);
+      border-color: color-mix(in srgb, var(--mm-green) 48%, transparent);
+      background: color-mix(in srgb, var(--mm-green) 10%, transparent);
+      animation: mm-update-glow 2.4s ease-in-out infinite;
+    }
+    #minimax-plan .title-update-check.has-update::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--mm-green);
+      box-shadow: 0 0 7px var(--mm-green);
+    }
+    @keyframes mm-update-spin { to { transform: rotate(360deg); } }
+    @keyframes mm-update-glow {
+      0%, 100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--mm-green) 9%, transparent), 0 0 7px color-mix(in srgb, var(--mm-green) 18%, transparent); }
+      50% { box-shadow: 0 0 0 2px color-mix(in srgb, var(--mm-green) 18%, transparent), 0 0 14px color-mix(in srgb, var(--mm-green) 42%, transparent); }
+    }
+    #minimax-plan .title-actions,
+    #minimax-plan .inline,
+    #minimax-plan .filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #minimax-plan .status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--mm-muted);
+      font-size: 12px;
+    }
+    #minimax-plan .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--mm-green);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mm-green) 16%, transparent);
+    }
+    #minimax-plan .icon-btn {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 6px;
+      color: var(--mm-muted);
+      background: transparent;
+    }
+    #minimax-plan .icon-btn:hover {
+      color: var(--mm-text);
+      background: var(--mm-surface);
+    }
+    #minimax-plan .page {
+      display: none;
+      min-height: 0;
+      overflow: auto;
+      padding: 22px 24px 80px;
+    }
+    #minimax-plan .page.active {
+      display: block;
+    }
+    #minimax-plan .page[data-page="clone"] { position: relative; }
+    #minimax-plan .clone-service-hint { position:absolute; inset:25% 15% auto; z-index:2; padding:24px; border:1px solid var(--mm-line); border-radius:8px; background:var(--mm-surface); text-align:center; }
+    #minimax-plan .page[data-page="image"] { height:100%; overflow:hidden; padding:0 0 88px; transition:none; }
+    #minimax-plan.image-viewer-open .page[data-page="image"] { position:fixed; inset:0; z-index:2000; width:100vw; height:100dvh; padding:0; background:var(--mm-bg); }
+    #minimax-plan .clone-service-hint p { color:var(--mm-muted); font-size:12px; }
+    #minimax-plan .page[data-page="workbench"].active {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #minimax-plan .page-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    #minimax-plan h1,
+    #minimax-plan h2,
+    #minimax-plan h3,
+    #minimax-plan p {
+      margin: 0;
+    }
+    #minimax-plan h1 {
+      font-size: 23px;
+      font-weight: 500;
+    }
+    #minimax-plan h2 {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    #minimax-plan h3 {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    #minimax-plan .subtitle {
+      margin-top: 5px;
+      color: var(--mm-muted);
+      font-size: 12px;
+    }
+    #minimax-plan .workbench-subtitle:empty { display: none; }
+    #minimax-plan .workbench-subtitle:not(:empty) { margin: 0 0 10px; }
+    #minimax-plan .works-status { margin: 0 0 10px; }
+    #minimax-plan .primary,
+    #minimax-plan .secondary {
+      height: 36px;
+      border-radius: 6px;
+      padding: 0 13px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    #minimax-plan .primary {
+      border: 1px solid var(--mm-accent);
+      color: var(--mm-accent-text);
+      background: var(--mm-accent);
+    }
+    #minimax-plan .secondary {
+      border: 1px solid var(--mm-line);
+      color: var(--mm-text);
+      background: var(--mm-surface);
+    }
+    #minimax-plan .overview-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.95fr;
+      gap: var(--mm-gap);
+    }
+    #minimax-plan .panel {
+      border: 1px solid var(--mm-line);
+      border-radius: var(--mm-radius);
+      background: var(--mm-surface);
+    }
+    #minimax-plan .service-panel {
+      padding: 18px;
+      min-height: 210px;
+    }
+    #minimax-plan .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    #minimax-plan .hero-status {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      padding: 16px;
+      border-radius: 6px;
+      background: var(--mm-raised);
+    }
+    #minimax-plan .service-control-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #minimax-plan .hero-status strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    #minimax-plan .hero-status p {
+      color: var(--mm-muted);
+      font-size: 11px;
+    }
+    #minimax-plan .service-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    #minimax-plan .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    #minimax-plan .metric {
+      padding: 12px;
+      border-left: 2px solid var(--mm-line);
+      background: var(--mm-field);
+    }
+    #minimax-plan .metric span {
+      display: block;
+      color: var(--mm-muted);
+      font-size: 11px;
+    }
+    #minimax-plan .metric strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    #minimax-plan .queue {
+      padding: 18px;
+    }
+    #minimax-plan .queue-main {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin: 22px 0;
+    }
+    #minimax-plan .queue-main strong {
+      font-size: 34px;
+      font-weight: 500;
+    }
+    #minimax-plan .queue-main span {
+      color: var(--mm-muted);
+      font-size: 11px;
+    }
+    #minimax-plan .progress {
+      height: 5px;
+      overflow: hidden;
+      background: var(--mm-field);
+    }
+    #minimax-plan .progress i {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--mm-accent);
+    }
+    #minimax-plan .lower-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.95fr;
+      gap: var(--mm-gap);
+      margin-top: var(--mm-gap);
+    }
+    #minimax-plan .activity,
+    #minimax-plan .quick {
+      padding: 18px;
+    }
+    #minimax-plan .activity-row {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--mm-line);
+      cursor: pointer;
+    }
+    #minimax-plan .activity-row:hover { background: color-mix(in srgb, var(--mm-green) 6%, transparent); }
+    #minimax-plan .activity-row:focus-visible { outline: 2px solid var(--mm-green); outline-offset: 2px; }
+    #minimax-plan .activity-row:first-of-type {
+      border-top: 0;
+    }
+    #minimax-plan .activity-thumb {
+      width: 72px;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      border-radius: 5px;
+      color: var(--mm-muted);
+      background: var(--mm-raised);
+    }
+    #minimax-plan .activity-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+    #minimax-plan .activity-thumb img.is-loaded { opacity: 1; }
+    #minimax-plan .activity-thumb .thumbnail-fallback,
+    #minimax-plan .activity-thumb-label {
+      padding: 4px;
+      text-align: center;
+      font-size: 9px;
+      line-height: 1.25;
+    }
+    #minimax-plan .activity-row strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    #minimax-plan .activity-row small {
+      color: var(--mm-muted);
+      font-size: 10px;
+    }
+    #minimax-plan .badge {
+      padding: 4px 7px;
+      border-radius: 999px;
+      color: var(--mm-green);
+      background: color-mix(in srgb, var(--mm-green) 12%, transparent);
+      font-size: 10px;
+    }
+    #minimax-plan .quick-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    #minimax-plan .quick-button {
+      min-height: 72px;
+      padding: 11px;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      text-align: left;
+      color: var(--mm-text);
+      background: var(--mm-field);
+    }
+    #minimax-plan .quick-button:hover,
+    #minimax-plan .quick-button:focus-visible {
+      border-color: color-mix(in srgb, var(--mm-accent) 45%, var(--mm-line));
+      background: color-mix(in srgb, var(--mm-accent) 7%, var(--mm-field));
+    }
+    #minimax-plan .quick-icon {
+      width: 23px;
+      height: 23px;
+      display: block;
+      color: var(--mm-quick-icon);
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #minimax-plan .quick-button span {
+      display: block;
+      margin-top: 10px;
+      font-size: 11px;
+    }
+    #minimax-plan .workbench {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 278px minmax(0, 1fr) 290px;
+      gap: 12px;
+      min-height: 430px;
+    }
+    #minimax-plan .rail {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--mm-line);
+      border-radius: var(--mm-radius);
+      background: var(--mm-surface);
+    }
+    #minimax-plan .rail-head {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--mm-line);
+    }
+    #minimax-plan .rail-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      height: 100%;
+    }
+    #minimax-plan .input-head-actions { display:flex; align-items:center; gap:8px; min-width:0; }
+    #minimax-plan .clear-creation-input { min-height:26px; padding:0 8px; font-size:11px; white-space:nowrap; border:1px solid var(--mm-line); border-radius:5px; background:var(--mm-surface); color:var(--mm-text); cursor:pointer; }
+    #minimax-plan .clear-creation-input:hover { background:var(--mm-field); }
+    @media(max-width:1120px) { #minimax-plan .input-head-actions .input-save-state { display:none; } }
+    #minimax-plan .rail-tab {
+      position: relative;
+      border: 0;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 12px;
+    }
+    #minimax-plan .rail-tab.active {
+      color: var(--mm-text);
+    }
+    #minimax-plan .rail-tab.active:after {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: -1px;
+      height: 2px;
+      background: var(--mm-accent);
+      content: "";
+    }
+    #minimax-plan .rail-tab-badge {
+      display: inline-grid;
+      place-items: center;
+      min-width: 17px;
+      height: 17px;
+      margin-left: 4px;
+      border-radius: 999px;
+      color: var(--mm-accent-text);
+      background: var(--mm-accent);
+      font-size: 9px;
+    }
+    #minimax-plan .rail-tab-badge:empty {
+      display: none;
+    }
+    #minimax-plan .rail-body {
+      padding: 14px;
+    }
+    #minimax-plan .rail-body.scrollable {
+      height: calc(100% - 48px);
+      overflow-y: auto;
+    }
+    #minimax-plan .rail-body.scrollable:has(.right-pane) {
+      overflow: hidden;
+    }
+    #minimax-plan .mode {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 3px;
+      background: var(--mm-field);
+    }
+    #minimax-plan .mode button {
+      height: 30px;
+      border: 0;
+      border-radius: 4px;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 11px;
+    }
+    #minimax-plan .mode button.active {
+      color: var(--mm-text);
+      background: var(--mm-raised);
+    }
+    #minimax-plan .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin: 13px 0;
+    }
+    #minimax-plan .asset {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px dashed var(--mm-line);
+      border-radius: 5px;
+      color: var(--mm-faint);
+      background: var(--mm-field);
+      font-size: 18px;
+    }
+    #minimax-plan .asset[draggable="true"] {
+      cursor: grab;
+    }
+    #minimax-plan .asset.is-dragging {
+      opacity: 0.42;
+      transform: scale(0.96);
+    }
+    #minimax-plan .asset.is-drag-target {
+      border-color: var(--mm-green);
+      box-shadow: inset 0 0 0 1px var(--mm-green);
+    }
+    #minimax-plan .asset.filled {
+      border-style: solid;
+      background: var(--mm-raised);
+      font-size: 10px;
+    }
+    #minimax-plan .reference-asset { position:relative; min-width:0; overflow:hidden; display:flex; flex-direction:column; }
+    #minimax-plan .asset-preview { flex:1; min-height:0; width:100%; border:0; padding:3px; background:transparent; color:var(--mm-muted); font-size:11px; }
+    #minimax-plan .asset-preview img { width:100%; height:100%; object-fit:contain; display:block; }
+    #minimax-plan .asset-caption { width:100%; padding:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10px; }
+    #minimax-plan .asset-remove { position:absolute; top:2px; right:2px; width:22px; height:22px; border:1px solid var(--mm-line); border-radius:4px; background:var(--mm-surface); color:var(--mm-text); }
+    #minimax-plan .asset-number { position:absolute; top:3px; left:3px; padding:2px 5px; border-radius:3px; background:var(--mm-surface); color:var(--mm-text); font-size:11px; font-weight:600; pointer-events:none; }
+    #minimax-plan .mention-menu button img, #minimax-plan .mention-placeholder { width:36px; height:36px; object-fit:contain; flex-shrink:0; }
+    #minimax-plan .mention-copy { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+    #minimax-plan .mention-copy small { display:block; }
+    #minimax-plan .mention-menu button[aria-selected="true"] { background:var(--mm-raised); outline:1px solid var(--mm-green); outline-offset:-1px; }
+    #minimax-plan .asset[data-frame-role] { font-size:12px; }
+    #minimax-plan .asset.is-restored {
+      border-color: color-mix(in srgb, var(--mm-green) 52%, var(--mm-line));
+      color: var(--mm-green);
+    }
+    #minimax-plan .field-label {
+      display: block;
+      margin: 13px 0 7px;
+      color: var(--mm-muted);
+      font-size: 11px;
+    }
+    #minimax-plan textarea {
+      width: 100%;
+      height: 118px;
+      resize: none;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      padding: 10px;
+      color: var(--mm-text);
+      background: var(--mm-field);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    #minimax-plan .prompt-editor-wrap {
+      position: relative;
+    }
+    #minimax-plan .mention-menu {
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      bottom: calc(100% + 6px);
+      z-index: 8;
+      display: none;
+      overflow: hidden;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      background: var(--mm-raised);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.26);
+    }
+    #minimax-plan .mention-menu.open {
+      display: block;
+      max-height: 190px;
+      overflow-y: auto;
+    }
+    #minimax-plan .mention-menu button {
+      width: 100%;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 0;
+      border-bottom: 1px solid var(--mm-line);
+      padding: 0 9px;
+      color: var(--mm-text);
+      background: transparent;
+      font-size: 10px;
+      text-align: left;
+    }
+    #minimax-plan .mention-menu button:last-child {
+      border-bottom: 0;
+    }
+    #minimax-plan .mention-menu button:hover {
+      background: var(--mm-field);
+    }
+    #minimax-plan .mention-menu small {
+      color: var(--mm-green);
+      font-size: 9px;
+    }
+    #minimax-plan .canvas {
+      position: relative;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      align-items: stretch;
+      gap: 12px;
+      overflow: hidden;
+      border: 1px solid var(--mm-line);
+      border-radius: var(--mm-radius);
+      padding: 14px;
+      background: var(--mm-canvas);
+    }
+    #minimax-plan .canvas:before {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(
+        var(--mm-line) 0.7px,
+        transparent 0.7px
+      );
+      background-size: 18px 18px;
+      content: "";
+      opacity: 0.65;
+    }
+    #minimax-plan .preview {
+      position: relative;
+      width: min(72%, 510px);
+      aspect-ratio: 16/9;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--mm-media-line);
+      border-radius: 6px;
+      background: var(--mm-preview);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+    #minimax-plan .preview-media {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--mm-preview);
+      transform-origin: center;
+      will-change: transform;
+    }
+    #minimax-plan .preview-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      place-items: center;
+    }
+    #minimax-plan .media-viewport { cursor: zoom-in; }
+    #minimax-plan .media-viewport.is-zoomed { cursor: grab; }
+    #minimax-plan .media-viewport.is-panning { cursor: grabbing; }
+    #minimax-plan .canvas-controls {
+      container-type: inline-size;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      gap: 6px;
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--mm-surface) 94%, transparent);
+      box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.12);
+    }
+    #minimax-plan .canvas-parameter-grid {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(64px, 0.6fr) minmax(136px, 1.55fr) minmax(48px, 0.52fr) minmax(58px, 0.58fr);
+      gap: 6px;
+      align-items: end;
+    }
+    #minimax-plan .canvas-parameter {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+      margin: 0;
+    }
+    @container (max-width: 480px) {
+      #minimax-plan .canvas-parameter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    #minimax-plan .canvas-parameter > span {
+      overflow: hidden;
+      color: var(--mm-muted);
+      font-size: 9px;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .canvas-parameter :is(input, select, output) {
+      min-width: 0;
+      width: 100%;
+      height: 28px;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 0 7px;
+      color: var(--mm-text);
+      background: var(--mm-field);
+      font: inherit;
+      font-size: 10px;
+    }
+    #minimax-plan .canvas-parameter output {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      color: var(--mm-muted);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .preview.is-welcome,
+    #minimax-plan .preview.is-loading {
+      border-color: transparent;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+    #minimax-plan .preview.is-loading:before,
+    #minimax-plan .preview.is-loading:after {
+      position: absolute;
+      inset: 0;
+      width: 124px;
+      height: 124px;
+      margin: auto;
+      border-radius: 50%;
+      pointer-events: none;
+      content: "";
+    }
+    #minimax-plan .preview.is-loading:before {
+      border: 1px solid color-mix(in srgb, var(--mm-green) 24%, transparent);
+      background: radial-gradient(circle, color-mix(in srgb, var(--mm-green) 12%, transparent), transparent 70%);
+      box-shadow: 0 0 36px color-mix(in srgb, var(--mm-green) 12%, transparent);
+      animation: mm-preview-pulse 3.2s ease-in-out infinite;
+    }
+    #minimax-plan .preview.is-loading:after {
+      width: 86px;
+      height: 86px;
+      border: 1px solid color-mix(in srgb, var(--mm-green) 20%, transparent);
+      animation: mm-preview-pulse 3.2s ease-in-out -1.6s infinite;
+    }
+    #minimax-plan .play {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #10141d;
+      background: #d8dee9;
+      font-size: 18px;
+    }
+    #minimax-plan .canvas-status {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      color: #a6acb7;
+      font-size: 10px;
+    }
+    #minimax-plan .parameter-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 0;
+      border-top: 1px solid var(--mm-line);
+      font-size: 11px;
+    }
+    #minimax-plan .parameter-row select,
+    #minimax-plan .parameter-row input {
+      max-width: 112px;
+      height: 30px;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 0 7px;
+      color: var(--mm-text);
+      background: var(--mm-field);
+    }
+    #minimax-plan .parameter-row output {
+      max-width: 128px;
+      color: var(--mm-muted);
+      font-size: 10px;
+      text-align: right;
+    }
+    #minimax-plan .parameter-group {
+      margin-top: 13px;
+      color: var(--mm-muted);
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    #minimax-plan .engine-note {
+      margin-top: 10px;
+      padding: 9px;
+      border-left: 2px solid var(--mm-green);
+      color: var(--mm-muted);
+      background: var(--mm-field);
+      font-size: 9px;
+      line-height: 1.5;
+    }
+    #minimax-plan .right-pane {
+      display: none;
+    }
+    #minimax-plan .right-pane.active {
+      display: block;
+    }
+    #minimax-plan .right-pane.active[data-right-pane="params"] {
+      height: 100%;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+    #minimax-plan .right-pane.active[data-right-pane="tasks"] {
+      height: 100%;
+      overflow-y: auto;
+      padding-right: 3px;
+      scrollbar-width: none;
+    }
+    #minimax-plan .params-scroll {
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 4px;
+      scrollbar-width: none;
+    }
+    #minimax-plan .right-pane.active[data-right-pane="tasks"]::-webkit-scrollbar,
+    #minimax-plan .params-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+    #minimax-plan .generate-footer {
+      padding-top: 10px;
+      border-top: 1px solid var(--mm-line);
+      background: var(--mm-surface);
+      box-shadow: 0 -12px 22px
+        color-mix(in srgb, var(--mm-surface) 92%, transparent);
+    }
+    #minimax-plan .generate-footer .generate {
+      margin-top: 0;
+    }
+    #minimax-plan .workbench > .rail:first-child {
+      display: flex;
+      flex-direction: column;
+    }
+    #minimax-plan .workbench > .rail:first-child .rail-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    #minimax-plan .workbench > .rail:first-child .rail-head,
+    #minimax-plan .workbench > .rail:first-child .rail-body > * { flex-shrink: 0; }
+    #minimax-plan .workbench > .rail:first-child .prompt-editor-wrap {
+      display: flex;
+      flex: 1 0 118px;
+      min-height: 118px;
+    }
+    #minimax-plan .workbench > .rail:first-child .work-prompt {
+      flex: 1;
+      height: 100%;
+      min-height: 118px;
+    }
+    #minimax-plan .workbench-generate-footer {
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--mm-line);
+      background: var(--mm-surface);
+      box-shadow: 0 -12px 22px color-mix(in srgb, var(--mm-surface) 92%, transparent);
+    }
+    #minimax-plan .task-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: var(--mm-muted);
+      font-size: 10px;
+    }
+    #minimax-plan .task-list {
+      display: grid;
+      gap: 8px;
+    }
+    #minimax-plan .task-summary {
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    #minimax-plan .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    #minimax-plan .clear-failed-tasks {
+      width: auto;
+      height: 24px;
+      padding: 0 6px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--mm-muted);
+      font: inherit;
+      font-size: 10px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    #minimax-plan .clear-failed-tasks:hover:not(:disabled),
+    #minimax-plan .clear-failed-tasks:focus-visible {
+      background: var(--mm-raised);
+      border-color: var(--mm-line);
+      color: var(--mm-text);
+    }
+    #minimax-plan .clear-failed-tasks:disabled {
+      opacity: 0.45;
+      cursor: wait;
+    }
+    #minimax-plan .task-cleanup-status {
+      margin: 0 0 8px;
+      font-size: 10px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+    #minimax-plan .task-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 9px;
+      padding: 11px;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      background: var(--mm-field);
+    }
+    #minimax-plan .task-card.can-preview {
+      cursor: pointer;
+    }
+    #minimax-plan .task-card.selected {
+      border-color: var(--mm-green);
+      box-shadow: inset 0 0 0 1px var(--mm-green);
+    }
+    #minimax-plan .task-thumbnail {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid var(--mm-line);
+      border-radius: 4px;
+      color: var(--mm-faint);
+      background: var(--mm-preview);
+      font-size: 10px;
+    }
+    #minimax-plan .task-thumbnail video,
+    #minimax-plan .task-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #minimax-plan .task-card strong {
+      display: block;
+      overflow: hidden;
+      color: var(--mm-text);
+      font-size: 11px;
+      font-weight: 500;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 5px;
+      color: var(--mm-muted);
+      font-size: 9px;
+    }
+    #minimax-plan .task-progress {
+      height: 3px;
+      margin-top: 9px;
+      overflow: hidden;
+      background: var(--mm-line);
+    }
+    #minimax-plan .task-progress i {
+      display: block;
+      height: 100%;
+      background: var(--mm-green);
+    }
+    #minimax-plan .task-cancel {
+      align-self: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid color-mix(in srgb, var(--mm-red) 45%, var(--mm-line));
+      border-radius: 5px;
+      color: var(--mm-red);
+      background: transparent;
+      font-size: 13px;
+    }
+    #minimax-plan .task-cancel:disabled {
+      border-color: var(--mm-line);
+      color: var(--mm-faint);
+      cursor: default;
+    }
+    #minimax-plan .task-result {
+      align-self: center;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid color-mix(in srgb, var(--mm-green) 45%, var(--mm-line));
+      border-radius: 5px;
+      color: var(--mm-green);
+      background: transparent;
+      font-size: 13px;
+    }
+    #minimax-plan .task-result.is-error {
+      border-color: color-mix(in srgb, var(--mm-red) 45%, var(--mm-line));
+      color: var(--mm-red);
+    }
+    #minimax-plan .task-menu-trigger {
+      align-self: center;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 0;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 16px;
+      line-height: 1;
+    }
+    #minimax-plan .task-menu-trigger:hover,
+    #minimax-plan .task-menu-trigger:focus-visible,
+    #minimax-plan .task-menu-trigger[aria-expanded="true"] {
+      border-color: var(--mm-green);
+      color: var(--mm-text);
+      background: var(--mm-raised);
+    }
+    #minimax-plan .task-menu-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      pointer-events: none;
+    }
+    #minimax-plan .task-menu-panel {
+      position: fixed;
+      min-width: 132px;
+      display: grid;
+      gap: 2px;
+      padding: 5px;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      background: var(--mm-raised);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+      pointer-events: auto;
+    }
+    #minimax-plan .task-menu-panel button {
+      width: 100%;
+      min-height: 30px;
+      border: 0;
+      border-radius: 4px;
+      padding: 0 9px;
+      color: var(--mm-text);
+      background: transparent;
+      font: inherit;
+      font-size: 10px;
+      text-align: left;
+    }
+    #minimax-plan .task-menu-panel button:hover:not(:disabled),
+    #minimax-plan .task-menu-panel button:focus-visible {
+      background: var(--mm-field);
+    }
+    #minimax-plan .task-menu-panel button:disabled {
+      color: var(--mm-faint);
+      cursor: default;
+    }
+    #minimax-plan .task-menu-panel .danger:not(:disabled) {
+      color: var(--mm-red);
+    }
+    #minimax-plan .task-card.is-cancelled {
+      opacity: 0.58;
+    }
+    #minimax-plan .task-card.is-cancelled .task-progress i {
+      background: var(--mm-faint);
+    }
+    #minimax-plan .task-history-note {
+      margin-bottom: 10px;
+      padding: 8px 9px;
+      border-left: 2px solid var(--mm-line);
+      color: var(--mm-muted);
+      background: var(--mm-field);
+      font-size: 9px;
+      line-height: 1.5;
+    }
+    #minimax-plan .generate {
+      width: 100%;
+      height: 42px;
+      margin-top: 14px;
+    }
+    #minimax-plan .generate.is-running {
+      border-color: var(--mm-red);
+      color: var(--mm-red);
+      background: transparent;
+    }
+    #minimax-plan .preview-copy {
+      position: absolute;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      color: var(--mm-muted);
+      font-size: 11px;
+    }
+    #minimax-plan .preview.is-welcome .play,
+    #minimax-plan .preview.is-loading .canvas-status,
+    #minimax-plan .preview.is-welcome .preview-progress,
+    #minimax-plan .preview.is-welcome .canvas-status {
+      display: none;
+    }
+    #minimax-plan .preview.is-welcome .preview-copy {
+      width: 90%;
+      text-align: center;
+    }
+    #minimax-plan .preview.is-welcome .preview-title {
+      font-size: 22px;
+      line-height: 1.5;
+    }
+    #minimax-plan .preview-copy[hidden] {
+      display: none;
+    }
+    #minimax-plan .preview-copy strong {
+      color: var(--mm-text);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    #minimax-plan .preview-copy.is-loading {
+      width: min(420px, 86%);
+      grid-template-columns: 42px minmax(0, 1fr);
+      column-gap: 16px;
+      row-gap: 5px;
+      align-items: center;
+      text-align: left;
+    }
+    #minimax-plan .preview-copy.is-loading .play,
+    #minimax-plan .preview-copy.is-loading .preview-progress {
+      display: none;
+    }
+    #minimax-plan .preview-spinner {
+      display: none;
+      width: 42px;
+      height: 42px;
+      border: 2px solid color-mix(in srgb, var(--mm-green) 48%, transparent);
+      border-radius: 50%;
+      box-shadow: 0 0 18px color-mix(in srgb, var(--mm-green) 20%, transparent);
+      animation: mm-preview-pulse 3.2s ease-in-out infinite;
+    }
+    #minimax-plan .preview-copy.is-loading .preview-spinner {
+      display: block;
+      grid-column: 1;
+      grid-row: 1 / span 4;
+    }
+    #minimax-plan .preview-copy.is-loading .preview-title,
+    #minimax-plan .preview-copy.is-loading .preview-message,
+    #minimax-plan .preview-copy.is-loading .preview-tip,
+    #minimax-plan .preview-copy.is-loading .preview-progress {
+      grid-column: 2;
+      justify-self: start;
+    }
+    #minimax-plan .preview-copy.is-loading .preview-title {
+      font-size: 16px;
+    }
+    #minimax-plan .preview-copy.is-loading .preview-message {
+      color: var(--mm-muted);
+    }
+    #minimax-plan .preview-copy.is-loading .preview-tip {
+      min-height: 0;
+      max-width: 100%;
+    }
+    #minimax-plan .preview-copy.is-loading .preview-progress {
+      width: min(180px, 100%);
+    }
+    #minimax-plan .preview-tip {
+      max-width: 100%;
+      min-height: 28px;
+      color: color-mix(in srgb, var(--mm-muted) 86%, var(--mm-green));
+      font-size: 10px;
+      line-height: 1.45;
+    }
+    #minimax-plan .preview-progress {
+      width: 180px;
+      height: 4px;
+      overflow: hidden;
+      background: var(--mm-field);
+    }
+    #minimax-plan .generation-eta[hidden] { display:none; }
+    #minimax-plan .generation-eta { display:flex; align-items:baseline; justify-content:center; gap:8px; flex-wrap:wrap; width:100%; padding:5px 0 0; }
+    #minimax-plan .generation-eta [data-eta-remaining] { color:var(--mm-text); font-size:13px; font-weight:500; line-height:1.4; font-variant-numeric:tabular-nums; }
+    #minimax-plan .generation-eta [data-eta-clock],
+    #minimax-plan .generation-eta [data-eta-evidence] { color:var(--mm-muted); font-size:10px; line-height:1.5; overflow-wrap:anywhere; }
+    #minimax-plan .generation-eta [data-eta-clock]::before { content:'·'; margin-right:8px; }
+    #minimax-plan .generation-eta-meta { display:none; color:var(--mm-muted); font-size:10px; font-variant-numeric:tabular-nums; }
+    #minimax-plan .preview-generation-stages { display:none; color:var(--mm-faint); font-size:9px; }
+    #minimax-plan .preview-copy.is-loading .preview-generation-stages { display:flex; grid-column:2; justify-content:space-between; gap:5px; width:100%; order:5; margin-top:8px; }
+    #minimax-plan .preview-generation-stages .done { color:color-mix(in srgb,var(--mm-green) 60%,var(--mm-muted)); }
+    #minimax-plan .preview-generation-stages .is-active { color:var(--mm-green); font-weight:500; }
+    #minimax-plan .preview-sampling-label { display:none; color:var(--mm-green); font-size:26px; font-variant-numeric:tabular-nums; line-height:1.1; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta { display:flex; flex-direction:column; align-items:stretch; gap:5px; width:min(360px,90%); padding:14px 16px; text-align:center; background:color-mix(in srgb,var(--mm-surface) 94%,transparent); border:1px solid var(--mm-line); border-radius:6px; box-shadow:0 8px 28px #0005; backdrop-filter:blur(8px); }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .preview-spinner { display:none; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .preview-progress { display:block; width:100%; order:3; margin:7px 0; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .preview-sampling-label { display:block; order:0; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .preview-title { display:none; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .generation-eta { order:2; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .preview-message { display:none; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .generation-eta-meta { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; order:4; }
+    #minimax-plan .preview-copy.is-loading.has-generation-eta .preview-tip { display:none; }
+    #minimax-plan .preview-progress i {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--mm-green);
+      transition: width 0.35s ease;
+    }
+    @keyframes mm-preview-pulse {
+      0%,
+      100% {
+        transform: scale(0.96);
+        opacity: 0.22;
+      }
+      50% {
+        transform: scale(1.03);
+        opacity: 0.5;
+      }
+    }
+    #minimax-plan .asset.is-hidden {
+      display: none;
+    }
+    #minimax-plan .works-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 14px;
+    }
+    #minimax-plan .filter-input,
+    #minimax-plan .filter-select {
+      height: 34px;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      padding: 0 10px;
+      color: var(--mm-text);
+      background: var(--mm-surface);
+      font-size: 11px;
+    }
+    #minimax-plan .filter-input {
+      width: 190px;
+    }
+    #minimax-plan .works-search-field {
+      position: relative;
+      width: 190px;
+      flex: 0 0 auto;
+    }
+    #minimax-plan .works-search-field .filter-input {
+      width: 100%;
+      padding-right: 34px;
+    }
+    #minimax-plan .works-search-clear {
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      transform: translateY(-50%);
+      border: 0;
+      border-radius: 4px;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 18px;
+      line-height: 1;
+    }
+    #minimax-plan .works-search-clear:hover,
+    #minimax-plan .works-search-clear:focus-visible {
+      color: var(--mm-text);
+      background: var(--mm-raised);
+    }
+    #minimax-plan .works-search-clear[hidden] {
+      display: none;
+    }
+    #minimax-plan .works-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-content: start;
+      align-items: start;
+    }
+    #minimax-plan .works-results { min-width: 0; }
+    #minimax-plan [data-page="works"] { --works-top-padding: 22px; }
+    #minimax-plan .works-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin-top: calc(-1 * var(--works-top-padding));
+      padding-top: var(--works-top-padding);
+      background: var(--mm-bg);
+      border-bottom: 1px solid var(--mm-line);
+    }
+    #minimax-plan .works-toolbar::before {
+      content: "";
+      position: absolute;
+      top: calc(-1 * var(--works-top-padding));
+      left: 0;
+      right: 0;
+      height: var(--works-top-padding);
+      background: var(--mm-bg);
+    }
+    #minimax-plan [data-page="works"] .page-head { flex-wrap:wrap; }
+    #minimax-plan [data-page="works"] .filters { flex-wrap:wrap; }
+    #minimax-plan .works-type-filter { display:flex; gap:2px; padding:3px; border:1px solid var(--mm-line); border-radius:7px; }
+    #minimax-plan .works-type-filter button { padding:6px 12px; border:0; border-radius:4px; background:transparent; color:var(--mm-muted); cursor:pointer; font:inherit; }
+    #minimax-plan .works-type-filter button[aria-pressed="true"] { background:var(--mm-raised, #30302f); color:var(--mm-text); }
+    #minimax-plan .works-pagination { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 0; margin-bottom:10px; width:calc(100% - 314px); }
+    #minimax-plan .works-pagination .subtitle { margin:0; margin-right:auto; }
+    #minimax-plan button:disabled { cursor:default; opacity:0.45; }
+    #minimax-plan .work-card:focus-visible { outline:2px solid var(--mm-green); outline-offset:2px; }
+    #minimax-plan .work-card { contain:layout paint; }
+    #minimax-plan .task-card { content-visibility:auto; contain-intrinsic-size:auto 86px; }
+    #minimax-plan .thumbnail-fallback { display:grid; place-items:center; width:100%; height:100%; color:var(--mm-faint); font-size:11px; }
+    #minimax-plan img[data-src]:not(.is-loaded) { opacity:0; }
+    #minimax-plan .work-image:has(img[data-src]:not(.is-loaded)):after { content:"预览加载中"; position:absolute; font-size:11px; color:var(--mm-faint); }
+    #minimax-plan .works-empty { grid-column:1 / -1; padding:30px 10px; }
+    #minimax-plan .work-card {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      overflow: hidden;
+      border: 1px solid var(--mm-line);
+      border-radius: var(--mm-radius);
+      background: var(--mm-surface);
+    }
+    #minimax-plan .work-card.selected {
+      border-color: var(--mm-green);
+      box-shadow: inset 0 0 0 1px var(--mm-green);
+    }
+    #minimax-plan .work-image {
+      position: relative;
+      height: 132px;
+      display: grid;
+      place-items: center;
+      padding: 8px;
+      background: var(--mm-preview);
+      color: var(--mm-faint);
+      overflow: hidden;
+    }
+    #minimax-plan .work-image video,
+    #minimax-plan .work-image img,
+    #minimax-plan .large-preview video,
+    #minimax-plan .large-preview img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      object-fit: contain;
+    }
+    #minimax-plan .media-shape {
+      display: grid;
+      place-items: center;
+      max-width: 100%;
+      max-height: 116px;
+      border: 1px solid var(--mm-media-line);
+      border-radius: 4px;
+      background: var(--mm-field);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    #minimax-plan .media-shape.landscape {
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    #minimax-plan .media-shape.portrait {
+      height: 116px;
+      aspect-ratio: 9/16;
+    }
+    #minimax-plan .media-shape.portrait-34 {
+      height: 116px;
+      aspect-ratio: 3/4;
+    }
+    #minimax-plan .media-shape.square {
+      height: 112px;
+      aspect-ratio: 1;
+    }
+    #minimax-plan .media-shape.standard {
+      height: 116px;
+      aspect-ratio: 4/3;
+    }
+    #minimax-plan .work-image .play {
+      width: 34px;
+      height: 34px;
+      font-size: 12px;
+    }
+    #minimax-plan .work-info {
+      padding: 9px 10px 8px;
+    }
+    #minimax-plan .work-info strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    #minimax-plan .work-info small {
+      display: block;
+      margin-top: 5px;
+      color: var(--mm-muted);
+      font-size: 9px;
+    }
+    #minimax-plan .work-actions {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--mm-line);
+    }
+    #minimax-plan .work-actions button {
+      min-width: 0;
+      height: 31px;
+      overflow: hidden;
+      border: 0;
+      border-right: 1px solid var(--mm-line);
+      padding: 0 3px;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 8px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .work-actions button:last-child {
+      border-right: 0;
+      color: var(--mm-red);
+    }
+    #minimax-plan .work-actions button:hover {
+      color: var(--mm-text);
+      background: var(--mm-raised);
+    }
+    #minimax-plan .inspector {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      padding: 16px;
+    }
+    #minimax-plan .large-preview {
+      aspect-ratio: 16/9;
+      display: grid;
+      place-items: center;
+      margin: 14px 0;
+      border: 1px solid var(--mm-media-line);
+      border-radius: 6px;
+      background: var(--mm-preview);
+      overflow: hidden;
+    }
+    #minimax-plan .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 0;
+      border-top: 1px solid var(--mm-line);
+      color: var(--mm-muted);
+      font-size: 10px;
+    }
+    #minimax-plan .detail-row strong {
+      color: var(--mm-text);
+      font-weight: 400;
+      text-align: right;
+    }
+    #minimax-plan .media-target {
+      cursor: zoom-in;
+    }
+    #minimax-plan .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(7, 8, 10, 0.76);
+      backdrop-filter: none;
+    }
+    #minimax-plan .modal-layer.open {
+      display: flex;
+    }
+    #minimax-plan .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 6px;
+      color: #fff;
+      background: rgba(20, 21, 24, 0.72);
+      font-size: 18px;
+    }
+    #minimax-plan .prompt-dialog {
+      width: min(760px, 88%);
+      max-height: 78%;
+      overflow: auto;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      padding: 24px;
+      color: #f0eee9;
+      background: #1e1f1f;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+    }
+    #minimax-plan .prompt-dialog h2 {
+      margin-bottom: 14px;
+      font-size: 16px;
+    }
+    #minimax-plan .prompt-dialog p {
+      white-space: pre-wrap;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    #minimax-plan .fullscreen-player {
+      width: min(1080px, 92%);
+      max-width: 92vw;
+    }
+    #minimax-plan .fullscreen-stage {
+      position: relative;
+      aspect-ratio: 16/9;
+      width: 100%;
+      max-height: calc(100dvh - 150px);
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: #111216;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
+      overflow: hidden;
+    }
+    #minimax-plan .fullscreen-stage video,
+    #minimax-plan .fullscreen-stage img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform-origin: center;
+      will-change: transform;
+    }
+    #minimax-plan .fullscreen-stage .play {
+      width: 64px;
+      height: 64px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+    #minimax-plan .player-controls {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      color: #e8e8ea;
+      font-size: 11px;
+    }
+    #minimax-plan .player-controls.image-mode {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    #minimax-plan .player-toggle {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      color: #fff;
+      background: #1e1f1f;
+    }
+    #minimax-plan .player-progress {
+      width: 100%;
+      accent-color: #d8dee9;
+      cursor: pointer;
+    }
+    #minimax-plan .player-title {
+      margin-top: 10px;
+      color: #e8e8ea;
+      font-size: 12px;
+      text-align: center;
+    }
+    #minimax-plan .settings-layout {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 18px;
+    }
+    #minimax-plan .settings-nav {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      max-height: calc(100dvh - 150px);
+      overflow: auto;
+      padding: 7px;
+      border-right: 1px solid var(--mm-line);
+    }
+    #minimax-plan .settings-nav button {
+      width: 100%;
+      height: 38px;
+      border: 0;
+      border-radius: 5px;
+      padding: 0 10px;
+      text-align: left;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 11px;
+    }
+    #minimax-plan .settings-nav button.active {
+      color: var(--mm-text);
+      background: var(--mm-surface);
+      box-shadow: inset 2px 0 var(--mm-green);
+    }
+    #minimax-plan .settings-nav button:focus-visible,
+    #minimax-plan .settings-search:focus-visible,
+    #minimax-plan .settings-search-results button:focus-visible {
+      outline: 2px solid var(--mm-green);
+      outline-offset: 2px;
+    }
+    #minimax-plan .settings-content {
+      max-width: 1100px;
+    }
+    #minimax-plan .settings-pane {
+      display: none;
+    }
+    #minimax-plan .settings-pane.active {
+      display: block;
+      margin-bottom: 16px;
+      padding: 18px 22px;
+      border: 1px solid var(--mm-line);
+      border-radius: var(--mm-radius);
+      background: var(--mm-surface);
+    }
+    #minimax-plan .settings-search-wrap { position: relative; margin: 0 0 18px; }
+    #minimax-plan .settings-search {
+      width: min(100%, 520px); height: 38px; padding: 0 12px;
+      border: 1px solid var(--mm-line); border-radius: 6px;
+      color: var(--mm-text); background: var(--mm-field);
+    }
+    #minimax-plan .settings-search-results {
+      position: absolute; z-index: 15; top: 43px; left: 0;
+      width: min(100%, 520px); max-height: 320px; overflow: auto;
+      padding: 5px; border: 1px solid var(--mm-line);
+      border-radius: 7px; background: var(--mm-raised);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, .28);
+    }
+    #minimax-plan .settings-search-results[hidden],
+    #minimax-plan .settings-mode-only[hidden],
+    #minimax-plan .settings-advanced[hidden] { display: none !important; }
+    #minimax-plan .setting[hidden] { display: none !important; }
+    #minimax-plan .settings-search-results button {
+      display: block; width: 100%; padding: 9px 11px;
+      border: 0; border-radius: 5px; text-align: left;
+      color: var(--mm-text); background: transparent;
+    }
+    #minimax-plan .settings-search-results button:hover { background: var(--mm-surface); }
+    #minimax-plan .settings-search-results small { display: block; color: var(--mm-muted); margin-top: 3px; }
+    #minimax-plan .settings-search-empty { padding: 10px; color: var(--mm-muted); }
+    #minimax-plan .settings-advanced { margin: 15px 0; border-top: 1px solid var(--mm-line); }
+    #minimax-plan .settings-advanced summary { padding: 15px 0; cursor: pointer; font-weight: 600; }
+    #minimax-plan .settings-advanced summary small { display: block; margin-top: 4px; color: var(--mm-muted); font-weight: 400; }
+    #minimax-plan .settings-danger { border-top-color: color-mix(in srgb, var(--mm-red) 40%, var(--mm-line)); }
+    #minimax-plan .settings-pane-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+    #minimax-plan .settings-pane-head p {
+      margin-top: 4px;
+      color: var(--mm-muted);
+      font-size: 10px;
+    }
+    #minimax-plan .qwen-keys-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
+    #minimax-plan .qwen-keys-summary > div { padding:16px; border:1px solid var(--mm-line); border-radius:8px; background:var(--mm-surface); }
+    #minimax-plan .qwen-keys-summary span { display:block; color:var(--mm-muted); font-size:12px; }
+    #minimax-plan .qwen-keys-summary strong { display:block; font-size:26px; margin-top:10px; }
+    #minimax-plan .qwen-keys-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:20px 0 12px; }
+    #minimax-plan .qwen-keys-toolbar > strong { margin-right:auto; }
+    #minimax-plan .qwen-key-search { width:200px; max-width:100%; padding:9px 10px; }
+    #minimax-plan .qwen-keys-table { overflow-x:auto; border:1px solid var(--mm-line); border-radius:8px; }
+    #minimax-plan .qwen-keys-table table { width:100%; min-width:900px; border-collapse:collapse; font-size:12px; }
+    #minimax-plan .qwen-keys-table th, #minimax-plan .qwen-keys-table td { padding:14px 12px; text-align:left; border-bottom:1px solid var(--mm-line); vertical-align:top; }
+    #minimax-plan .qwen-keys-table th { color:var(--mm-muted); font-weight:400; background:var(--mm-surface); }
+    #minimax-plan .qwen-keys-table td small { display:block; margin-top:6px; color:var(--mm-muted); }
+    #minimax-plan .qwen-key-value { display:block; max-width:240px; overflow-wrap:anywhere; font-size:11px; }
+    #minimax-plan .qwen-key-actions { display:flex; flex-wrap:wrap; gap:6px; min-width:190px; }
+    #minimax-plan .qwen-key-actions button { padding:5px 7px; font-size:11px; }
+    #minimax-plan .qwen-key-enabled { color:var(--mm-green); }
+    #minimax-plan .qwen-key-disabled { color:var(--mm-muted); }
+    #minimax-plan .qwen-keys-state { margin:12px 0; overflow-wrap:anywhere; }
+    #minimax-plan .qwen-key-dialog { width:440px; max-width:calc(100vw - 32px); padding:28px; border:1px solid var(--mm-line); border-radius:12px; background:var(--mm-bg); color:var(--mm-text); }
+    #minimax-plan .qwen-key-dialog::backdrop { background:#0009; }
+    #minimax-plan .qwen-key-dialog label { display:block; margin-top:20px; }
+    #minimax-plan .qwen-key-dialog input { width:100%; padding:10px; margin-top:8px; }
+    #minimax-plan .qwen-key-dialog h2 { margin:0 0 12px; }
+    #minimax-plan .qwen-key-close { position:absolute; right:12px; top:10px; border:0; background:transparent; color:var(--mm-muted); cursor:pointer; font-size:24px; }
+    #minimax-plan .qwen-key-dialog-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; }
+    #minimax-plan .qwen-created-value { display:block; overflow-wrap:anywhere; padding:16px; background:var(--mm-field); border-radius:6px; margin-top:16px; }
+    #minimax-plan .settings-section {
+      margin-bottom: 14px;
+      border-top: 1px solid var(--mm-line);
+    }
+    #minimax-plan .settings-section h2 {
+      padding: 15px 0 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--mm-muted);
+    }
+    #minimax-plan .setting {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 240px;
+      align-items: center;
+      gap: 18px;
+      min-height: 64px;
+      padding: 10px 0;
+      border-top: 1px solid color-mix(in srgb, var(--mm-line) 60%, transparent);
+    }
+    #minimax-plan .setting:first-of-type {
+      border-top: 0;
+    }
+    #minimax-plan .setting.topaz-path-row,
+    #minimax-plan .setting.topaz-status-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    #minimax-plan .topaz-controls, #minimax-plan .upscale-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+    #minimax-plan .topaz-controls .topaz-path { flex: 1 1 260px; min-width: 0; height: 34px; padding: 0 9px; border: 1px solid var(--mm-line); border-radius: 5px; color: var(--mm-text); background: var(--mm-field); font-size: 11px; }
+    #minimax-plan .topaz-controls button, #minimax-plan .upscale-actions button { flex: 0 0 auto; white-space: nowrap; }
+    #minimax-plan .upscale-actions small { color: var(--mm-muted); }
+    #minimax-plan [data-setting-pane="upscale"] select { min-width: 0; width: 100%; max-width: 100%; }
+    #minimax-plan [data-setting-pane="upscale"] .settings-pane-head { flex-wrap: wrap; }
+    #minimax-plan [data-setting-pane="upscale"] .settings-pane-head > div { min-width: 0; }
+    #minimax-plan [data-setting-pane="upscale"] small,
+    #minimax-plan [data-setting-pane="upscale"] p,
+    #minimax-plan .upscale-settings-state { overflow-wrap: anywhere; }
+    #minimax-plan .upscale-settings-state { max-width: 100%; white-space: normal; }
+    #minimax-plan [data-page="settings"] { padding-bottom: 120px; scroll-padding-bottom: 120px; }
+    #minimax-plan [data-setting-pane="upscale"] input,
+    #minimax-plan [data-setting-pane="upscale"] select,
+    #minimax-plan [data-setting-pane="upscale"] button { scroll-margin: 16px 0 120px; }
+    @media (max-width: 900px) {
+      #minimax-plan [data-setting-pane="upscale"] .setting { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    }
+    #minimax-plan .setting strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    #minimax-plan .setting small {
+      display: block;
+      margin-top: 4px;
+      color: var(--mm-muted);
+      font-size: 10px;
+      line-height: 1.45;
+    }
+    #minimax-plan .setting select {
+      height: 34px;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 0 9px;
+      color: var(--mm-text);
+      background: var(--mm-surface);
+      font-size: 11px;
+    }
+    #minimax-plan .task-variants { display:flex; gap:6px; align-items:center; margin-top:7px; flex-wrap:wrap; }
+    #minimax-plan .task-variants button { border:1px solid var(--mm-line); border-radius:4px; padding:3px 6px; color:var(--mm-text); background:var(--mm-surface); font-size:10px; cursor:pointer; }
+    #minimax-plan .task-variants button:hover { border-color:var(--mm-green); }
+    #minimax-plan .task-variants span { color:var(--mm-green); font-size:10px; }
+    #minimax-plan .cloud-h3-key {
+      width: 100%; height: 34px; border: 1px solid var(--mm-line); border-radius: 5px;
+      padding: 0 9px; color: var(--mm-text); background: var(--mm-field); font-size: 11px;
+    }
+    #minimax-plan .cloud-h3-settings > .subtitle { margin: 0 0 8px; }
+    #minimax-plan .cloud-h3-settings .inline { gap: 9px; align-items: center; flex-wrap: wrap; padding: 4px 0 16px; }
+    #minimax-plan .setting-control {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      min-width: 0;
+    }
+    #minimax-plan .setting-control .secondary {
+      white-space: nowrap;
+    }
+    #minimax-plan .player-tool {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      color: #fff;
+      background: #1e1f1f;
+    }
+    #minimax-plan [data-setting-pane="update"] .setting input,
+    #minimax-plan [data-setting-pane="update"] .setting select {
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #minimax-plan .install-directory-setting {
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 1fr);
+    }
+    #minimax-plan .install-directory-control {
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+    }
+    #minimax-plan .install-directory-input,
+    #minimax-plan .install-directory-candidates {
+      width: 100%;
+      min-width: 0;
+      height: 34px;
+      box-sizing: border-box;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 0 9px;
+      color: var(--mm-text);
+      background: var(--mm-field);
+      font-size: 10px;
+    }
+    #minimax-plan .badge.is-missing {
+      color: #dc7373;
+      background: color-mix(in srgb, #dc7373 13%, transparent);
+    }
+    #minimax-plan .install-directory-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: flex-end;
+    }
+    #minimax-plan .path-field {
+      width: 100%;
+      height: 34px;
+      overflow: hidden;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 8px 9px;
+      color: var(--mm-muted);
+      background: var(--mm-field);
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .choice {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      padding: 3px;
+      background: var(--mm-field);
+    }
+    #minimax-plan .choice button {
+      height: 29px;
+      border: 0;
+      border-radius: 4px;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 10px;
+    }
+    #minimax-plan .choice button.active {
+      color: var(--mm-text);
+      background: var(--mm-raised);
+    }
+    #minimax-plan .about-block {
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 0 20px;
+      border-top: 1px solid var(--mm-line);
+    }
+    #minimax-plan .about-logo {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--mm-accent);
+      border-radius: 50%;
+      font-weight: 500;
+    }
+    #minimax-plan .provider-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    #minimax-plan .provider-list {
+      display: grid;
+      gap: 10px;
+    }
+    #minimax-plan .provider-picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 8px;
+    }
+    #minimax-plan .provider-choice-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 4px 10px;
+      min-height: 76px;
+      padding: 12px;
+      border: 1px solid var(--mm-line);
+      border-radius: 6px;
+      color: var(--mm-text);
+      background: var(--mm-surface);
+      text-align: left;
+      transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+    }
+    #minimax-plan .provider-choice-card:hover {
+      border-color: color-mix(in srgb, var(--mm-accent) 48%, var(--mm-line));
+      background: var(--mm-raised);
+      transform: translateY(-1px);
+    }
+    #minimax-plan .provider-choice-card.active {
+      border-color: var(--mm-accent);
+      background: color-mix(in srgb, var(--mm-accent) 10%, var(--mm-surface));
+      box-shadow: inset 3px 0 0 var(--mm-accent);
+    }
+    #minimax-plan .provider-choice-card:focus-visible {
+      outline: 2px solid var(--mm-accent);
+      outline-offset: 2px;
+    }
+    #minimax-plan .provider-choice-name {
+      overflow: hidden;
+      font-size: 12px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .provider-choice-meta {
+      overflow: hidden;
+      grid-column: 1 / -1;
+      color: var(--mm-muted);
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .provider-choice-status {
+      align-self: start;
+      color: var(--mm-green);
+      font-size: 10px;
+    }
+    #minimax-plan .provider-choice-card.disabled .provider-choice-status {
+      color: var(--mm-muted);
+    }
+    #minimax-plan .provider-picker-empty {
+      display: grid;
+      min-height: 76px;
+      place-items: center start;
+      padding: 0 13px;
+      border: 1px dashed var(--mm-line);
+      border-radius: 6px;
+      color: var(--mm-muted);
+      font-size: 11px;
+    }
+    #minimax-plan .provider-card {
+      border: 1px solid var(--mm-line);
+      border-radius: var(--mm-radius);
+      background: var(--mm-surface);
+    }
+    #minimax-plan .provider-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 13px;
+      border-bottom: 1px solid var(--mm-line);
+    }
+    #minimax-plan .provider-card-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    #minimax-plan .provider-collapse {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 0;
+      background: transparent;
+    }
+    #minimax-plan .provider-collapse:before {
+      position: absolute;
+      left: 9px;
+      top: 8px;
+      width: 7px;
+      height: 7px;
+      border-right: 1.5px solid var(--mm-muted);
+      border-bottom: 1.5px solid var(--mm-muted);
+      content: "";
+      transform: rotate(45deg);
+      transition: transform 0.16s ease, top 0.16s ease;
+    }
+    #minimax-plan .provider-card.collapsed .provider-collapse:before {
+      top: 10px;
+      transform: rotate(-45deg);
+    }
+    #minimax-plan .provider-card.collapsed .provider-card-body {
+      display: none;
+    }
+    #minimax-plan .provider-card-body {
+      padding: 13px;
+    }
+    #minimax-plan .provider-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    #minimax-plan .provider-field {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      color: var(--mm-muted);
+      font-size: 10px;
+    }
+    #minimax-plan .provider-field.full {
+      grid-column: 1 / -1;
+    }
+    #minimax-plan .provider-field input,
+    #minimax-plan .provider-field select {
+      width: 100%;
+      height: 34px;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      padding: 0 9px;
+      color: var(--mm-text);
+      background: var(--mm-field);
+      font-size: 11px;
+    }
+    #minimax-plan .url-preview {
+      display: block;
+      overflow: hidden;
+      color: var(--mm-green);
+      font-size: 9px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #minimax-plan .model-picker {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 7px;
+      padding-top: 10px;
+      border-top: 1px solid var(--mm-line);
+    }
+    #minimax-plan .model-picker-head,
+    #minimax-plan .model-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    #minimax-plan .model-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      max-height: 190px;
+      overflow: auto;
+    }
+    #minimax-plan .model-option {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 32px;
+      padding: 6px 8px;
+      border: 1px solid var(--mm-line);
+      border-radius: 5px;
+      color: var(--mm-muted);
+      background: var(--mm-field);
+      font-size: 10px;
+    }
+    #minimax-plan .skill-status {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 13px;
+      border-left: 2px solid var(--mm-green);
+      background: var(--mm-field);
+    }
+    #minimax-plan .skill-status strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    #minimax-plan .skill-status small {
+      display: block;
+      margin-top: 4px;
+      color: var(--mm-muted);
+      font-size: 9px;
+    }
+    #minimax-plan .toggle {
+      justify-self: end;
+      width: 40px;
+      height: 22px;
+      border: 0;
+      border-radius: 999px;
+      padding: 3px;
+      background: var(--mm-accent);
+    }
+    #minimax-plan .toggle:before {
+      display: block;
+      width: 16px;
+      height: 16px;
+      margin-left: 18px;
+      border-radius: 50%;
+      background: var(--mm-accent-text);
+      content: "";
+    }
+    #minimax-plan .toggle.off {
+      background: var(--mm-line);
+    }
+    #minimax-plan .toggle.off:before {
+      margin-left: 0;
+      background: var(--mm-muted);
+    }
+    #minimax-plan .dock {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 4px;
+      border: 1px solid color-mix(in srgb, var(--mm-line) 86%, transparent);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--mm-surface) 92%, transparent);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+      transform: translateX(-50%);
+      backdrop-filter: none;
+    }
+    #minimax-plan .dock button {
+      width: 56px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      border: 0;
+      border-radius: 6px;
+      color: var(--mm-muted);
+      background: transparent;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+    #minimax-plan .dock button svg {
+      width: 16px;
+      height: 16px;
+    }
+    #minimax-plan .dock button.active {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--mm-accent-text);
+      background: var(--mm-accent);
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+    #minimax-plan .dock .dock-divider {
+      width: 1px;
+      height: 22px;
+      margin: 0 1px;
+      background: var(--mm-line);
+    }
+    #minimax-plan .dock .mini-status {
+      width: 24px;
+      color: var(--mm-green);
+    }
+    #minimax-plan.theme-ivory {
+      color-scheme: light;
+      --mm-bg: #f7f1e6;
+      --mm-surface: #faf2e7;
+      --mm-raised: #fffaf4;
+      --mm-field: #f4ecdf;
+      --mm-line: rgba(91, 74, 54, 0.12);
+      --mm-text: #332d28;
+      --mm-muted: #766f68;
+      --mm-faint: #a3978c;
+      --mm-accent: #5c4838;
+      --mm-accent-text: #fffaf4;
+      --mm-quick-icon: #8b6346;
+      --mm-canvas: #f3eadc;
+      --mm-preview: #fffaf4;
+      --mm-media-line: rgba(91, 74, 54, 0.16);
+    }
+    #minimax-plan.theme-pure {
+      color-scheme: light;
+      --mm-bg: #ffffff;
+      --mm-surface: #fafafa;
+      --mm-raised: #ffffff;
+      --mm-field: #f5f5f5;
+      --mm-line: rgba(23, 23, 23, 0.12);
+      --mm-text: #171717;
+      --mm-muted: #737373;
+      --mm-faint: #a3a3a3;
+      --mm-accent: #171717;
+      --mm-accent-text: #ffffff;
+      --mm-quick-icon: #171717;
+      --mm-canvas: #f3f3f3;
+      --mm-preview: #ffffff;
+      --mm-media-line: rgba(23, 23, 23, 0.14);
+    }
+    #minimax-plan.theme-ivory .preview {
+      box-shadow:
+        0 22px 54px rgba(92, 72, 48, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    #minimax-plan.theme-pure .preview {
+      box-shadow:
+        0 22px 54px rgba(23, 23, 23, 0.13),
+        inset 0 1px 0 #fff;
+    }
+    #minimax-plan.theme-ivory .app {
+      box-shadow: 0 26px 76px rgba(92, 72, 48, 0.14);
+    }
+    #minimax-plan.theme-ivory .dock {
+      border-color: rgba(91, 74, 54, 0.1);
+      background: rgba(251, 245, 238, 0.92);
+      box-shadow:
+        0 18px 44px rgba(92, 72, 48, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86);
+    }
+    #minimax-plan.theme-ivory .dock button.active {
+      border-color: rgba(154, 102, 54, 0.2);
+      color: #332d28;
+      background: #fffaf4;
+      box-shadow:
+        0 0 0 3px rgba(255, 250, 244, 0.7),
+        0 13px 28px rgba(92, 72, 48, 0.22),
+        inset 0 1px 0 #fff;
+    }
+    #minimax-plan.theme-pure .app {
+      box-shadow: 0 26px 76px rgba(23, 23, 23, 0.12);
+    }
+    #minimax-plan.theme-pure .dock {
+      border-color: rgba(23, 23, 23, 0.1);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow:
+        0 18px 44px rgba(23, 23, 23, 0.14),
+        inset 0 1px 0 #fff;
+    }
+    #minimax-plan.theme-pure .dock button.active {
+      border-color: rgba(23, 23, 23, 0.12);
+      color: #171717;
+      background: #ffffff;
+      box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.78),
+        0 13px 30px rgba(23, 23, 23, 0.2),
+        inset 0 1px 0 #fff;
+    }
+    @media (min-width: 1600px) and (min-height: 900px) {
+      /* 保持全窗口布局，只放大文字与常用控件，避免 zoom 压缩可用画布。 */
+      #minimax-plan .brand { font-size: 24px; }
+      #minimax-plan .brand-mark { width: 36px; height: 36px; font-size: 16px; }
+      #minimax-plan .brand-version,
+      #minimax-plan .status,
+      #minimax-plan .subtitle { font-size: 18px; }
+      #minimax-plan h1 { font-size: 35px; }
+      #minimax-plan h2 { font-size: 23px; }
+      #minimax-plan h3 { font-size: 20px; }
+      #minimax-plan .app :is(span, strong, small, output, label, p) { font-size: 15px; }
+      #minimax-plan .primary,
+      #minimax-plan .secondary,
+      #minimax-plan .mode button,
+      #minimax-plan .rail-tab,
+      #minimax-plan .settings-nav button,
+      #minimax-plan .dock button,
+      #minimax-plan input,
+      #minimax-plan select,
+      #minimax-plan textarea { font-size: 15px; }
+      #minimax-plan .primary,
+      #minimax-plan .secondary,
+      #minimax-plan .mode button,
+      #minimax-plan input,
+      #minimax-plan select { min-height: 54px; }
+      #minimax-plan .rail-head { min-height: 72px; }
+      #minimax-plan .parameter-row { min-height: 54px; }
+      #minimax-plan textarea { min-height: 177px; }
+      #minimax-plan .dock { gap: 4px; padding: 6px; }
+      #minimax-plan .dock button {
+        width: 78px;
+        height: 54px;
+        grid-template-rows: 18px minmax(0, 1fr);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      #minimax-plan .icon-btn,
+      #minimax-plan .task-cancel,
+      #minimax-plan .task-result,
+      #minimax-plan .task-menu-trigger,
+      #minimax-plan .asset-remove { min-height: 0; }
+      #minimax-plan .icon-btn { width: 36px; height: 36px; }
+      #minimax-plan .task-card { padding: 12px; }
+      #minimax-plan .task-thumbnail { width: 52px; height: 52px; }
+      #minimax-plan .asset-caption,
+      #minimax-plan .asset-number,
+      #minimax-plan .mention-menu small { font-size: 12px; }
+      #minimax-plan .preview-copy .preview-title { font-size: 26px; }
+      #minimax-plan .preview-copy .preview-message { font-size: 15px; }
+      #minimax-plan .canvas-status span { font-size: 14px; }
+      #minimax-plan .app {
+        width: 100%;
+        height: 100dvh;
+        min-height: 520px;
+      }
+    }
+    @media (min-width: 2000px) and (min-height: 900px) {
+      #minimax-plan {
+        --mm-gap: 20px;
+      }
+      #minimax-plan .titlebar {
+        height: 66px;
+        padding: 0 30px;
+      }
+      #minimax-plan .brand {
+        gap: 13px;
+        font-size: 17px;
+      }
+      #minimax-plan .brand-mark {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+      }
+      #minimax-plan .brand-version,
+      #minimax-plan .status,
+      #minimax-plan .subtitle {
+        font-size: 15px;
+      }
+      #minimax-plan .icon-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      #minimax-plan .page {
+        padding: 32px 38px 100px;
+      }
+      #minimax-plan [data-page="works"] { --works-top-padding: 32px; }
+      #minimax-plan .page-head {
+        margin-bottom: 26px;
+      }
+      #minimax-plan h1 {
+        font-size: 30px;
+      }
+      #minimax-plan h2 {
+        font-size: 19px;
+      }
+      #minimax-plan h3,
+      #minimax-plan .panel-head,
+      #minimax-plan .setting strong {
+        font-size: 17px;
+      }
+      #minimax-plan .primary,
+      #minimax-plan .secondary {
+        height: 44px;
+        padding: 0 17px;
+        font-size: 15px;
+      }
+      #minimax-plan .overview-grid,
+      #minimax-plan .lower-grid {
+        grid-template-columns: minmax(760px, 1.45fr) minmax(500px, 0.95fr);
+        max-width: 2200px;
+      }
+      #minimax-plan .service-panel,
+      #minimax-plan .queue,
+      #minimax-plan .activity,
+      #minimax-plan .quick {
+        padding: 24px;
+      }
+      #minimax-plan .hero-status {
+        gap: 24px;
+        padding: 22px;
+      }
+      #minimax-plan .hero-status strong,
+      #minimax-plan .metric strong {
+        font-size: 23px;
+      }
+      #minimax-plan .hero-status p,
+      #minimax-plan .metric span,
+      #minimax-plan .queue-main span,
+      #minimax-plan .activity-row small,
+      #minimax-plan .quick-button span,
+      #minimax-plan .badge {
+        font-size: 14px;
+      }
+      #minimax-plan .metric {
+        padding: 17px;
+      }
+      #minimax-plan .queue-main strong {
+        font-size: 42px;
+      }
+      #minimax-plan .activity-row {
+        grid-template-columns: 84px minmax(0, 1fr) auto;
+        gap: 13px;
+        padding: 13px 0;
+      }
+      #minimax-plan .activity-thumb {
+        width: 84px;
+      }
+      #minimax-plan .activity-row strong {
+        font-size: 15px;
+      }
+      #minimax-plan .quick-button {
+        min-height: 96px;
+        padding: 16px;
+        font-size: 18px;
+      }
+      #minimax-plan .workbench {
+        grid-template-columns: 360px minmax(720px, 1fr) 370px;
+        gap: 18px;
+        min-height: 610px;
+      }
+      #minimax-plan .rail-head {
+        height: 60px;
+        padding: 0 20px;
+      }
+      #minimax-plan .rail-body {
+        padding: 20px;
+      }
+      #minimax-plan .rail-body.scrollable {
+        height: calc(100% - 60px);
+      }
+      #minimax-plan .rail-tab,
+      #minimax-plan .mode button,
+      #minimax-plan .field-label,
+      #minimax-plan .parameter-row,
+      #minimax-plan .task-card,
+      #minimax-plan textarea {
+        font-size: 15px;
+      }
+      #minimax-plan .mode button {
+        height: 38px;
+      }
+      #minimax-plan .asset-grid {
+        gap: 10px;
+        margin: 17px 0;
+      }
+      #minimax-plan textarea {
+        height: 156px;
+        padding: 14px;
+      }
+      #minimax-plan .settings-layout {
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 28px;
+      }
+      #minimax-plan .settings-nav {
+        padding: 10px;
+      }
+      #minimax-plan .settings-nav button {
+        height: 46px;
+        padding: 0 14px;
+        font-size: 15px;
+      }
+      #minimax-plan .settings-content {
+        max-width: 1100px;
+      }
+      #minimax-plan .settings-pane-head {
+        margin-bottom: 22px;
+      }
+      #minimax-plan .settings-pane-head p,
+      #minimax-plan .setting small,
+      #minimax-plan .provider-field,
+      #minimax-plan .url-preview {
+        font-size: 14px;
+      }
+      #minimax-plan .settings-section {
+        margin-bottom: 20px;
+      }
+      #minimax-plan .settings-section h2 {
+        padding: 20px 0 13px;
+        font-size: 17px;
+      }
+      #minimax-plan .setting {
+        grid-template-columns: minmax(0, 1fr) 360px;
+        min-height: 78px;
+        gap: 28px;
+        padding: 13px 0;
+      }
+      #minimax-plan .setting select,
+      #minimax-plan .provider-field input,
+      #minimax-plan .provider-field select,
+      #minimax-plan .install-directory-input,
+      #minimax-plan .install-directory-candidates,
+      #minimax-plan .path-field {
+        height: 42px;
+        font-size: 14px;
+      }
+      #minimax-plan .toggle {
+        width: 50px;
+        height: 28px;
+        padding: 4px;
+      }
+      #minimax-plan .toggle:before {
+        width: 20px;
+        height: 20px;
+        margin-left: 22px;
+      }
+      #minimax-plan .dock {
+        bottom: 20px;
+        gap: 4px;
+        padding: 6px;
+      }
+      #minimax-plan .dock button {
+        width: 78px;
+        height: 54px;
+        font-size: 12px;
+      }
+      #minimax-plan .dock button svg {
+        width: 18px;
+        height: 18px;
+      }
+      #minimax-plan .task-card strong { font-size: 14px; }
+      #minimax-plan .task-meta { font-size: 12px; }
+      #minimax-plan .canvas-parameter > span,
+      #minimax-plan .canvas-parameter :is(input, select, output),
+      #minimax-plan .task-menu-panel button { font-size: 12px; }
+    }
+    /* 中等宽度窗口优先保留中央预览画布，避免三列同时显示时状态文案被压成逐字换行。 */
+    @media (max-width: 1180px) {
+      #minimax-plan .works-pagination { width: 100%; }
+      #minimax-plan .overview-grid,
+      #minimax-plan .lower-grid,
+      #minimax-plan .works-layout {
+        grid-template-columns: 1fr;
+      }
+      #minimax-plan .workbench {
+        grid-template-columns: 240px minmax(440px, 1fr);
+        overflow-x: auto;
+      }
+      #minimax-plan .workbench > .rail:last-child {
+        display: none;
+      }
+      #minimax-plan .works-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      #minimax-plan .inspector {
+        display: none;
+      }
+    }
+    @media (max-width: 600px) {
+      #minimax-plan .page {
+        padding: 16px 12px 76px;
+      }
+      #minimax-plan [data-page="works"] { --works-top-padding: 16px; }
+      #minimax-plan .page-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      #minimax-plan .metrics {
+        grid-template-columns: 1fr 1fr;
+      }
+      #minimax-plan .filters {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+      #minimax-plan .filter-input {
+        width: 100%;
+      }
+      #minimax-plan .works-search-field {
+        width: 100%;
+      }
+      #minimax-plan .works-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      #minimax-plan .settings-layout {
+        grid-template-columns: 1fr;
+      }
+      #minimax-plan .settings-nav {
+        display: flex;
+        position: static;
+        max-height: none;
+        overflow: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--mm-line);
+      }
+      #minimax-plan .settings-nav button {
+        width: auto;
+        white-space: nowrap;
+      }
+      #minimax-plan .setting {
+        grid-template-columns: 1fr;
+      }
+      #minimax-plan .settings-pane.active { padding: 15px 13px; }
+      #minimax-plan .setting select,
+      #minimax-plan .toggle {
+        justify-self: start;
+      }
+      #minimax-plan .dock button {
+        width: 52px;
+      }
+      .titlebar .status {
+        display: none;
+      }
+    }
+    .workbench-update-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.68);
+    }
+    .workbench-update-dialog {
+      width: min(100%, 440px);
+      padding: 24px;
+      border: 1px solid #414a47;
+      border-radius: 6px;
+      background: #222625;
+      color: #eff3f1;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+    .workbench-update-dialog h2 { margin: 0 0 10px; font-size: 18px; }
+    .workbench-update-dialog p { margin: 0 0 14px; color: #b6c3bd; font-size: 13px; line-height: 1.5; }
+    .workbench-update-dialog .notes { max-height: 160px; overflow: auto; white-space: pre-wrap; }
+    .workbench-update-dialog .actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 20px; }
+    .workbench-update-dialog button { min-width: 80px; min-height: 36px; padding: 0 12px; border: 1px solid #52625c; border-radius: 5px; background: #292f2d; color: #eff3f1; cursor: pointer; }
+    .workbench-update-dialog button.primary { border-color: #609c9b; background: #357574; }
+    .workbench-update-dialog button:disabled { opacity: .6; cursor: default; }
+    #minimax-plan .workbench { --task-width:290px; grid-template-columns:278px minmax(0,1fr) var(--task-width); grid-template-rows:minmax(0,1fr); transition:grid-template-columns .36s cubic-bezier(.22,1,.36,1); }
+    #minimax-plan .workbench > .rail:last-child { display:flex; flex-direction:column; min-height:0; }
+    #minimax-plan .task-rail-head { flex:none; min-height:50px; height:auto; padding:12px; gap:8px; }
+    #minimax-plan .task-rail-head h2 { white-space:nowrap; }
+    #minimax-plan .task-rail-toggle { flex:none; width:28px; height:28px; padding:0; border:1px solid var(--mm-line); border-radius:6px; background:var(--mm-raised); color:var(--mm-text); font:inherit; font-size:10px; cursor:pointer; transition:transform .32s cubic-bezier(.22,1,.36,1); }
+    #minimax-plan .task-rail-toggle:hover { background:#373936; }
+    #minimax-plan #videoTaskBody { flex:1; min-height:0; height:auto; transition:opacity .26s cubic-bezier(.22,1,.36,1),visibility .36s; }
+    #minimax-plan .workbench.tasks-collapsed { --task-width:46px; }
+    #minimax-plan .tasks-collapsed .task-rail-head { padding:8px; justify-content:center; }
+    #minimax-plan .tasks-collapsed .task-rail-head h2,#minimax-plan .tasks-collapsed .task-count { display:none; }
+    #minimax-plan .tasks-collapsed #videoTaskBody { opacity:0; visibility:hidden; overflow:hidden; }
+    #minimax-plan .tasks-collapsed .task-rail-toggle { transform:rotate(180deg); }
+    @media(min-width:1800px) { #minimax-plan .workbench { grid-template-columns:360px minmax(720px,1fr) var(--task-width); --task-width:370px; } }
+    @media(max-width:1180px) { #minimax-plan .workbench { grid-template-columns:240px minmax(0,1fr) var(--task-width); --task-width:240px; } }
+    @media(max-width:700px) { #minimax-plan .workbench { display:flex; flex-direction:column; overflow:visible; } #minimax-plan .workbench > .rail:last-child { min-height:48px; } #minimax-plan .tasks-collapsed #videoTaskBody { max-height:0; padding:0; } }
+    @media(prefers-reduced-motion:reduce) { #minimax-plan .workbench,#videoTaskBody,#minimax-plan .task-rail-toggle { transition:none; } }
+
+#minimax-plan .provider-picker { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+#minimax-plan .provider-choice-card { width:100%; min-height:112px; text-align:left; padding:16px; border-radius:10px; }
+#minimax-plan .provider-choice-meta { overflow-wrap:anywhere; }
+#minimax-plan .provider-dialog,#minimax-plan .assistant-chat-dialog { width:min(660px,calc(100vw - 32px)); max-height:85dvh; box-sizing:border-box; overflow:auto; border:1px solid var(--mm-line); border-radius:14px; padding:20px; background:var(--mm-surface); color:var(--mm-text); box-shadow:0 24px 80px #0008; }
+#minimax-plan dialog::backdrop { background:#0009; backdrop-filter:blur(5px); }
+#minimax-plan .provider-dialog .provider-card { border:0; background:transparent; }
+#minimax-plan .provider-dialog .provider-card-head { padding:0 0 12px; }
+#minimax-plan .provider-dialog .provider-card-body { padding:16px 0 0; display:block; }
+#minimax-plan .provider-collapse::before { display:none; }
+#minimax-plan .provider-collapse { width:auto; padding:4px 10px; }
+#minimax-plan .dialog-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+#minimax-plan .chat-messages { height:260px; overflow:auto; display:flex; flex-direction:column; gap:12px; margin:16px 0; }
+#minimax-plan .chat-message { padding:12px; border-radius:10px; background:var(--mm-surface); white-space:pre-wrap; overflow-wrap:anywhere; }
+#minimax-plan .chat-message.user { background:#86e5ba14; margin-left:36px; }
+#minimax-plan .chat-message.error { color:#ff9a9a; }
+#minimax-plan .chat-form textarea { width:100%; box-sizing:border-box; padding:12px; resize:vertical; }
+#minimax-plan .chat-form .inline { justify-content:space-between; margin-top:10px; }
+#minimax-plan .chat-state { font-size:12px; color:var(--mm-muted); }
+
+@media(max-width:700px) {
+ #minimax-plan .workbench > * { min-width:0; width:100%; }
+ #minimax-plan .workbench .canvas { min-height:340px; flex-shrink:0; }
+ #minimax-plan .workbench .rail { flex-shrink:0; }
+ #minimax-plan .canvas-parameters { flex-wrap:wrap; }
+ #minimax-plan .provider-form { grid-template-columns:minmax(0,1fr); }
+ #minimax-plan .titlebar { padding:0 8px; gap:8px; height:auto; min-height:54px; flex-wrap:wrap; }
+ #minimax-plan .brand { font-size:12px; gap:5px; }
+ #minimax-plan .brand-mark,#minimax-plan .brand-version { display:none; }
+ #minimax-plan .dock { max-width:calc(100vw - 12px); }
+ #minimax-plan .dock button { width:46px; }
+}
+</style>
+  <div class="app">
+    <header class="titlebar">
+      <div class="brand">
+        <span class="brand-mark">H3</span><span>MiniMax Studio</span><span class="brand-version">v0.4.138</span
+        ><button class="title-update-check" type="button" aria-label="检查更新" title="检查更新">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3M4 5v4h4M4 13a8 8 0 0 0 14.9 3M20 19v-4h-4" /></svg>
+        </button>
+      </div>
+      <div class="title-actions">
+        <div class="platform-run-switch" role="group" aria-label="运行模式">
+          <span class="badge cloud-points" hidden title="当前可用积分">积分 --</span>
+          <div class="platform-run-options">
+            <button type="button" data-run-mode="local">本地</button><button type="button" data-run-mode="node">算力节点</button><button type="button" data-run-mode="cloud">✦ 云端</button>
+          </div>
+        </div>
+        <button
+          class="icon-btn theme-switch"
+          type="button"
+          aria-label="切换主题"
+          title="切换主题"
+        >
+          ◐</button>
+      </div>
+    </header>
+
+    <section class="page active" data-page="overview">
+      <div class="page-head">
+        <button class="primary goto-workbench" type="button">新建生成</button>
+      </div>
+      <div class="overview-grid">
+        <section class="panel service-panel">
+          <div class="panel-head">
+            <h2>服务状态</h2>
+            <span class="badge">检查中</span>
+          </div>
+          <div class="hero-status">
+            <div>
+              <strong>正在检查 MiniMax H3</strong>
+              <p>正在读取 Web 服务与 H3 节点状态</p>
+            </div>
+            <div class="service-control-actions">
+              <button class="primary start-service" type="button">启动服务</button>
+              <button class="secondary stop-service" type="button">停止服务</button>
+              <button class="secondary restart-service" type="button">重启服务</button>
+            </div>
+          </div>
+          <div class="service-actions">
+            <button class="secondary" type="button">打开 ComfyUI 画布</button
+            ><button class="secondary open-web-workbench" type="button">打开 Web 工作台</button
+            ><button class="secondary" type="button">打开日志</button
+            ><button class="secondary" type="button">释放缓存</button>
+          </div>
+        </section>
+        <section class="panel queue">
+          <div class="panel-head">
+            <h2>当前任务</h2>
+            <span class="badge">检查中</span>
+          </div>
+          <div class="queue-main">
+            <div>
+              <strong>--</strong><span>正在读取任务队列</span>
+            </div>
+            <span>队列 --</span>
+          </div>
+          <div class="progress"><i></i></div>
+        </section>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <span>GPU 显存</span><strong>--</strong>
+        </div>
+        <div class="metric"><span>内存</span><strong>--</strong></div>
+        <div class="metric"><span>今日完成</span><strong>--</strong></div>
+        <div class="metric"><span>作品总数</span><strong>--</strong></div>
+      </div>
+      <div class="lower-grid">
+        <section class="panel activity">
+          <div class="panel-head">
+            <h2>最近任务</h2>
+            <button
+              class="icon-btn goto-works"
+              type="button"
+              aria-label="查看全部"
+            >
+              →
+            </button>
+          </div>
+          <p class="subtitle activity-empty">正在读取最近任务</p>
+        </section>
+        <section class="panel quick">
+          <div class="panel-head"><h2>快捷操作</h2></div>
+          <div class="quick-grid">
+            <button class="quick-button goto-workbench" data-quick-mode="references" type="button">
+              <svg class="quick-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="10" height="12" rx="1"/><path d="m13 9 3-2 5 3v6l-5 3-3-2M6 9h4M6 13h4"/></svg><span>多参考素材生成</span></button
+            ><button class="quick-button goto-workbench" data-quick-mode="keyframes" type="button">
+              <svg class="quick-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="6" height="14" rx="1"/><rect x="15" y="5" width="6" height="14" rx="1"/><path d="m10 12 4-3v6l-4-3Z"/></svg><span>首尾帧生成</span></button
+            ><button class="quick-button quick-open-output" type="button">
+              <svg class="quick-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h7l2 2h9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M12 16V9m0 0-3 3m3-3 3 3"/></svg><span>打开生成目录</span></button
+            ><button class="quick-button goto-settings quick-performance" type="button">
+              <svg class="quick-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .9 1.6-2.4 2.4-1.6-.9a7 7 0 0 1-2 .8V21H10v-2.1a7 7 0 0 1-2-.8l-1.6.9L4 16.6l.9-1.6a7 7 0 0 1-.8-2H2v-4h2.1a7 7 0 0 1 .8-2L4 5.4 6.4 3 8 3.9a7 7 0 0 1 2-.8V1h4v2.1a7 7 0 0 1 2 .8l1.6-.9L20 5.4l-.9 1.6a7 7 0 0 1 .8 2H22v4h-2.1a7 7 0 0 1-.5 2Z"/></svg><span>性能设置</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="page" data-page="workbench">
+      <p class="subtitle workbench-subtitle" role="status" aria-live="polite"></p>
+      <div class="workbench">
+        <aside class="rail">
+          <div class="rail-head">
+            <h2>创作输入</h2>
+            <div class="input-head-actions"><span class="badge input-save-state">文本参数自动保存</span><button type="button" class="clear-creation-input">清空输入</button></div>
+          </div>
+          <div class="rail-body">
+            <div class="mode">
+              <button class="active" type="button" data-work-mode="references">
+                多参考素材</button
+              ><button type="button" data-work-mode="keyframes">首尾帧</button>
+            </div>
+            <span class="field-label asset-summary"
+              >参考素材 · 图片 0/9 · 视频 0/3</span
+            >
+            <div class="asset-grid"><button class="asset add-asset" type="button">＋</button></div>
+            <span class="field-label">创作需求 · 可直接写“图1的人参考视频1的动作”，输入 @ 选择素材</span>
+            <div class="prompt-editor-wrap">
+              <textarea class="work-prompt" aria-label="创作需求" placeholder="用自己的话描述想要的画面、动作和声音。"></textarea>
+              <div
+                class="mention-menu"
+                role="listbox"
+                aria-label="选择参考素材"
+              ></div>
+            </div>
+            <div class="inline" style="margin-top: 8px">
+              <span class="subtitle prompt-count">需求 0 字</span>
+            </div>
+            <textarea class="compiled-prompt" hidden style="display:none" aria-hidden="true" tabindex="-1"></textarea>
+            <div class="workbench-generate-footer">
+              <button class="primary generate" type="button">开始生成</button>
+              <p class="platform-cost-estimate" hidden>正在读取云端积分价格</p>
+              <p class="subtitle preflight-state" hidden></p>
+            </div>
+          </div>
+        </aside>
+        <main class="canvas">
+          <div class="preview-wrap">
+            <div class="preview media-viewport is-welcome">
+              <video class="preview-media" controls playsinline hidden></video>
+              <div class="preview-copy">
+              <span class="play">▶</span><span class="preview-spinner" aria-hidden="true"></span
+              ><strong class="preview-title">Minimax H3 导演工作台</strong
+              ><span class="preview-message">开始创造你的想法</span>
+              <button type="button" class="preview-copy-error" hidden>复制原因</button>
+              <div class="generation-eta" hidden>
+                <strong data-eta-remaining aria-live="polite" aria-atomic="true"></strong>
+                <span data-eta-clock></span>
+                <small data-eta-evidence hidden></small>
+              </div>
+              <span class="preview-sampling-label"></span>
+              <span class="preview-tip" hidden></span>
+              <div class="preview-progress"><i></i></div>
+              <div class="generation-eta-meta"><span data-eta-stage></span><span data-eta-elapsed></span></div>
+              <div class="preview-generation-stages" aria-label="生成阶段"><span data-pipeline-step="-1">准备提示词</span><span data-pipeline-step="0">模型准备</span><span data-pipeline-step="1">素材理解</span><span data-pipeline-step="2">视频生成</span><span data-pipeline-step="3">解码保存</span></div>
+            </div>
+              <div class="canvas-status">
+              <span class="preview-spec">输出规格读取中</span
+              ><span class="preview-time">--:--</span>
+              </div>
+            </div>
+          </div>
+          <section class="canvas-controls" aria-label="生成参数与视频操作">
+            <div class="canvas-parameter-grid">
+              <label class="canvas-parameter aspect-parameter">
+                <span>画幅比例</span>
+                <select class="aspect-select"></select>
+              </label>
+              <label class="canvas-parameter resolution-parameter" for="workbenchResolutionSize">
+                <span>分辨率</span>
+                <select class="resolution-size-select" id="workbenchResolutionSize"></select>
+                <select class="resolution-select" hidden aria-hidden="true" tabindex="-1">
+                  <option value="0.2MP 21:9 - 672x288">0.2MP · 21:9 · 672×288</option>
+                  <option value="0.3MP 21:9 - 896x384">0.3MP · 21:9 · 896×384</option>
+                  <option value="0.4MP 21:9 - 960x416">0.4MP · 21:9 · 960×416</option>
+                  <option value="0.5MP 21:9 - 1120x480">0.5MP · 21:9 · 1120×480</option>
+                  <option value="0.6MP 21:9 - 1184x512">0.6MP · 21:9 · 1184×512</option>
+                  <option value="0.7MP 21:9 - 1280x544">0.7MP · 21:9 · 1280×544</option>
+                  <option value="0.8MP 21:9 - 1376x576">0.8MP · 21:9 · 1376×576</option>
+                  <option value="0.9MP 21:9 - 1440x608">0.9MP · 21:9 · 1440×608</option>
+                  <option value="1.0MP 21:9 - 1536x640">1.0MP · 21:9 · 1536×640</option>
+                  <option value="1.2MP 21:9 - 1664x704">1.2MP · 21:9 · 1664×704</option>
+                  <option value="1.38MP 21:9 - 1792x768 (768P)">1.38MP · 21:9 · 1792×768 · 768P</option>
+                  <option value="1.5MP 21:9 - 1856x800 (高显存实验)">1.5MP · 21:9 · 1856×800 · 高显存实验</option>
+                  <option value="1.8MP 21:9 - 2048x864 (高显存实验)">1.8MP · 21:9 · 2048×864 · 高显存实验</option>
+                  <option value="2.0MP 21:9 - 2176x928 (高显存实验)">2.0MP · 21:9 · 2176×928 · 高显存实验</option>
+                  <option value="0.2MP 16:9 - 608x352">0.2MP · 16:9 · 608×352</option>
+                  <option value="0.3MP 16:9 - 736x416">0.3MP · 16:9 · 736×416</option>
+                  <option value="0.4MP 16:9 - 864x480">0.4MP · 16:9 · 864×480</option>
+                  <option value="0.5MP 16:9 - 960x544">0.5MP · 16:9 · 960×544</option>
+                  <option value="0.6MP 16:9 - 1056x608" selected>0.6MP · 16:9 · 1056×608</option>
+                  <option value="0.7MP 16:9 - 1152x640">0.7MP · 16:9 · 1152×640</option>
+                  <option value="0.8MP 16:9 - 1216x672">0.8MP · 16:9 · 1216×672</option>
+                  <option value="0.9MP 16:9 - 1280x736">0.9MP · 16:9 · 1280×736</option>
+                  <option value="0.98MP 16:9 - 1344x768 (H3 原生上限)">0.98MP · 16:9 · 1344×768 · H3 原生上限</option>
+                  <option value="1.0MP 16:9 - 1376x768 (高显存实验)">1.0MP · 16:9 · 1376×768 · 高显存实验</option>
+                  <option value="1.2MP 16:9 - 1504x832 (高显存实验)">1.2MP · 16:9 · 1504×832 · 高显存实验</option>
+                  <option value="1.5MP 16:9 - 1664x928 (高显存实验)">1.5MP · 16:9 · 1664×928 · 高显存实验</option>
+                  <option value="1.8MP 16:9 - 1824x1024 (高显存实验)">1.8MP · 16:9 · 1824×1024 · 高显存实验</option>
+                  <option value="2.0MP 16:9 - 1920x1088 (高显存实验)">2.0MP · 16:9 · 1920×1088 · 高显存实验</option>
+                  <option value="0.2MP 4:3 - 512x384">0.2MP · 4:3 · 512×384</option>
+                  <option value="0.3MP 4:3 - 640x480">0.3MP · 4:3 · 640×480</option>
+                  <option value="0.4MP 4:3 - 768x576">0.4MP · 4:3 · 768×576</option>
+                  <option value="0.5MP 4:3 - 832x608">0.5MP · 4:3 · 832×608</option>
+                  <option value="0.6MP 4:3 - 896x672">0.6MP · 4:3 · 896×672</option>
+                  <option value="0.7MP 4:3 - 960x736">0.7MP · 4:3 · 960×736</option>
+                  <option value="0.8MP 4:3 - 1024x768 (768P)">0.8MP · 4:3 · 1024×768 · 768P</option>
+                  <option value="0.9MP 4:3 - 1088x832 (高显存实验)">0.9MP · 4:3 · 1088×832 · 高显存实验</option>
+                  <option value="1.0MP 4:3 - 1152x864 (高显存实验)">1.0MP · 4:3 · 1152×864 · 高显存实验</option>
+                  <option value="1.2MP 4:3 - 1280x960 (高显存实验)">1.2MP · 4:3 · 1280×960 · 高显存实验</option>
+                  <option value="1.5MP 4:3 - 1408x1056 (高显存实验)">1.5MP · 4:3 · 1408×1056 · 高显存实验</option>
+                  <option value="1.8MP 4:3 - 1536x1152 (高显存实验)">1.8MP · 4:3 · 1536×1152 · 高显存实验</option>
+                  <option value="2.0MP 4:3 - 1632x1216 (高显存实验)">2.0MP · 4:3 · 1632×1216 · 高显存实验</option>
+                  <option value="0.2MP 1:1 - 448x448">0.2MP · 1:1 · 448×448</option>
+                  <option value="Square 512x512">Square · 512×512</option>
+                  <option value="0.3MP 1:1 - 544x544">0.3MP · 1:1 · 544×544</option>
+                  <option value="0.4MP 1:1 - 640x640">0.4MP · 1:1 · 640×640</option>
+                  <option value="0.5MP 1:1 - 704x704">0.5MP · 1:1 · 704×704</option>
+                  <option value="0.6MP 1:1 - 768x768 (768P)">0.6MP · 1:1 · 768×768 · 768P</option>
+                  <option value="0.7MP 1:1 - 832x832 (高显存实验)">0.7MP · 1:1 · 832×832 · 高显存实验</option>
+                  <option value="0.8MP 1:1 - 896x896 (高显存实验)">0.8MP · 1:1 · 896×896 · 高显存实验</option>
+                  <option value="0.9MP 1:1 - 960x960 (高显存实验)">0.9MP · 1:1 · 960×960 · 高显存实验</option>
+                  <option value="1.0MP 1:1 - 992x992 (高显存实验)">1.0MP · 1:1 · 992×992 · 高显存实验</option>
+                  <option value="1.2MP 1:1 - 1088x1088 (高显存实验)">1.2MP · 1:1 · 1088×1088 · 高显存实验</option>
+                  <option value="1.5MP 1:1 - 1216x1216 (高显存实验)">1.5MP · 1:1 · 1216×1216 · 高显存实验</option>
+                  <option value="1.8MP 1:1 - 1344x1344 (高显存实验)">1.8MP · 1:1 · 1344×1344 · 高显存实验</option>
+                  <option value="2.0MP 1:1 - 1408x1408 (高显存实验)">2.0MP · 1:1 · 1408×1408 · 高显存实验</option>
+                  <option value="0.2MP 3:4 - 384x512">0.2MP · 3:4 · 384×512</option>
+                  <option value="0.3MP 3:4 - 480x640">0.3MP · 3:4 · 480×640</option>
+                  <option value="0.4MP 3:4 - 576x768">0.4MP · 3:4 · 576×768</option>
+                  <option value="0.5MP 3:4 - 608x832">0.5MP · 3:4 · 608×832</option>
+                  <option value="0.6MP 3:4 - 672x896">0.6MP · 3:4 · 672×896</option>
+                  <option value="0.7MP 3:4 - 736x960">0.7MP · 3:4 · 736×960</option>
+                  <option value="0.8MP 3:4 - 768x1024 (768P)">0.8MP · 3:4 · 768×1024 · 768P</option>
+                  <option value="0.9MP 3:4 - 832x1088 (高显存实验)">0.9MP · 3:4 · 832×1088 · 高显存实验</option>
+                  <option value="1.0MP 3:4 - 864x1152 (高显存实验)">1.0MP · 3:4 · 864×1152 · 高显存实验</option>
+                  <option value="1.2MP 3:4 - 960x1280 (高显存实验)">1.2MP · 3:4 · 960×1280 · 高显存实验</option>
+                  <option value="1.5MP 3:4 - 1056x1408 (高显存实验)">1.5MP · 3:4 · 1056×1408 · 高显存实验</option>
+                  <option value="1.8MP 3:4 - 1152x1536 (高显存实验)">1.8MP · 3:4 · 1152×1536 · 高显存实验</option>
+                  <option value="2.0MP 3:4 - 1216x1632 (高显存实验)">2.0MP · 3:4 · 1216×1632 · 高显存实验</option>
+                  <option value="0.2MP 9:16 - 352x608">0.2MP · 9:16 · 352×608</option>
+                  <option value="0.3MP 9:16 - 416x736">0.3MP · 9:16 · 416×736</option>
+                  <option value="0.4MP 9:16 - 480x864">0.4MP · 9:16 · 480×864</option>
+                  <option value="0.5MP 9:16 - 544x960">0.5MP · 9:16 · 544×960</option>
+                  <option value="0.6MP 9:16 - 608x1056">0.6MP · 9:16 · 608×1056</option>
+                  <option value="0.7MP 9:16 - 640x1152">0.7MP · 9:16 · 640×1152</option>
+                  <option value="0.8MP 9:16 - 672x1216">0.8MP · 9:16 · 672×1216</option>
+                  <option value="0.9MP 9:16 - 736x1280">0.9MP · 9:16 · 736×1280</option>
+                  <option value="1.03MP 9:16 - 768x1344 (768P)">1.03MP · 9:16 · 768×1344 · 768P</option>
+                  <option value="1.0MP 9:16 - 768x1376 (高显存实验)">1.0MP · 9:16 · 768×1376 · 高显存实验</option>
+                  <option value="1.2MP 9:16 - 832x1504 (高显存实验)">1.2MP · 9:16 · 832×1504 · 高显存实验</option>
+                  <option value="1.5MP 9:16 - 928x1664 (高显存实验)">1.5MP · 9:16 · 928×1664 · 高显存实验</option>
+                  <option value="1.8MP 9:16 - 1024x1824 (高显存实验)">1.8MP · 9:16 · 1024×1824 · 高显存实验</option>
+                  <option value="2.0MP 9:16 - 1088x1920 (高显存实验)">2.0MP · 9:16 · 1088×1920 · 高显存实验</option>
+                </select>
+              </label>
+              <label class="canvas-parameter compact-parameter">
+                <span>时长</span>
+                <input class="duration-input" type="number" min="1" max="15" step="0.5" value="6" aria-label="生成时长" />
+              </label>
+              <label class="canvas-parameter compact-parameter">
+                <span>采样步数</span>
+                <input class="steps-input" type="number" min="4" step="1" value="8" aria-label="采样步数" />
+              </label>
+            </div>
+          </section>
+          <input class="seed-input" type="hidden" />
+        </main>
+        <aside class="rail">
+          <div class="rail-head task-rail-head">
+            <h2>生成任务</h2>
+            <span class="rail-tab-badge task-count"></span><button class="task-rail-toggle" type="button" aria-expanded="true" aria-controls="videoTaskBody" title="收起生成任务">›</button>
+          </div>
+          <div id="videoTaskBody" class="rail-body scrollable">
+            <div class="task-summary">
+              <span>正在读取最近 100 条任务</span>
+              <div class="task-actions">
+              <button class="clear-failed-tasks" type="button" title="清理失败、已取消及视频文件缺失的任务记录">清理失败任务</button>
+              <button
+                class="icon-btn refresh-tasks"
+                type="button"
+                aria-label="刷新任务"
+                title="刷新任务"
+              >
+                ↻
+              </button>
+              </div>
+            </div>
+            <p class="task-cleanup-status subtitle" role="status" hidden></p>
+            <div class="task-history-note">
+              任务卡显示生成模式、输出尺寸、时长、Steps
+              和状态，不展示提示词。
+            </div>
+            <div class="task-list" aria-label="最近100条生成任务"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+
+    <section class="page" data-page="image">
+      <iframe class="image-studio-frame" title="图片创作" style="width:100%;height:100%;border:0;display:block"></iframe>
+    </section>
+    <section class="page" data-page="clone" style="padding:0 0 88px;height:100%;overflow:hidden">
+      <div class="clone-service-hint" hidden><strong>辅助功能尚未就绪</strong><p></p><button class="secondary clone-service-retry" type="button">重试</button></div>
+      <iframe class="clone-center-frame" title="克隆中心" style="width:100%;height:100%;border:0;display:block" data-src="clone-center/index.html"></iframe>
+    </section>
+    <section class="page" data-page="works">
+      <div class="works-toolbar">
+        <div class="page-head">
+          <div class="filters">
+            <div class="works-type-filter" role="group" aria-label="作品类型筛选">
+              <button type="button" data-works-type="all" aria-pressed="true">全部</button>
+              <button type="button" data-works-type="video" aria-pressed="false">视频</button>
+              <button type="button" data-works-type="image" aria-pressed="false">图片</button>
+            </div>
+            <div class="works-search-field">
+              <input class="filter-input works-search" aria-label="搜索全部作品" placeholder="搜索文件名、提示词或任务 ID" maxlength="200" />
+              <button class="works-search-clear" type="button" aria-label="清空作品搜索" title="清空搜索" hidden>×</button>
+            </div>
+            <select class="filter-select works-order" aria-label="作品排序">
+              <option value="desc">最新优先</option><option value="asc">最早优先</option>
+            </select>
+            <label class="subtitle">每页 <select class="filter-select works-page-size" aria-label="每页作品数量">
+              <option value="12">12</option><option value="24" selected>24</option><option value="48">48</option><option value="100">100</option><option value="200">200</option>
+            </select></label>
+            <button class="secondary refresh-works" type="button">刷新</button>
+          </div>
+        </div>
+        <p class="subtitle works-hint">支持视频与图片作品，可按类型筛选、搜索，每页最多显示 200 个。</p>
+        <p class="subtitle works-status" role="status" aria-live="polite">正在读取作品</p>
+        <nav class="works-pagination" aria-label="作品分页">
+          <span class="subtitle works-page-info" role="status" aria-live="polite">第 1 / 1 页</span>
+          <button class="secondary" data-works-page="first" disabled>首页</button>
+          <button class="secondary" data-works-page="previous" disabled>上一页</button>
+          <button class="secondary" data-works-page="next" disabled>下一页</button>
+          <button class="secondary" data-works-page="last" disabled>末页</button>
+        </nav>
+      </div>
+      <div class="works-layout">
+        <div class="works-results">
+          <div class="works-error-actions" hidden>
+            <button class="primary works-start-service" type="button" hidden>启动服务</button>
+            <button class="secondary works-service-overview" type="button">查看服务状态</button>
+          </div>
+          <div class="works-grid" aria-busy="false"><p class="subtitle works-empty">进入此页后读取作品</p></div>
+        </div>
+        <aside class="panel inspector">
+          <div class="panel-head">
+            <h2>作品详情</h2>
+            <button class="icon-btn" type="button" aria-label="更多操作">
+              •••
+            </button>
+          </div>
+          <div class="large-preview media-target"><span class="subtitle">选择作品查看详情</span></div>
+          <h3 class="inspector-title">未选择作品</h3>
+          <p class="subtitle inspector-subtitle">双击画面可全屏播放</p>
+          <div class="detail-row">
+            <span>任务 ID</span><strong data-work-detail="id">--</strong>
+          </div>
+          <div class="detail-row">
+            <span>规格</span><strong data-work-detail="spec">--</strong>
+          </div>
+          <div class="detail-row">
+            <span>模式</span><strong data-work-detail="mode">--</strong>
+          </div>
+          <div class="detail-row">
+            <span>生成耗时</span><strong data-work-detail="elapsed">--</strong>
+          </div>
+          <div class="inline" style="margin-top: 14px; flex-wrap: wrap">
+            <button class="primary" type="button" data-inspector-action="download">下载</button
+            ><button class="secondary view-prompt" type="button" data-inspector-action="prompt">
+              查看提示词</button
+            ><button class="secondary goto-workbench" type="button" data-inspector-action="edit">
+              重新编辑</button
+            ><button class="secondary delete-work" type="button" data-inspector-action="delete">
+              删除作品
+            </button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="page" data-page="settings">
+      <div class="page-head">
+        <span class="badge">设置按项保存</span>
+      </div>
+      <div class="settings-layout">
+        <nav class="settings-nav" aria-label="设置分类">
+          <button class="active" type="button" data-setting="generation" aria-current="page">生成设置</button>
+          <button type="button" data-setting="connection">连接与服务</button>
+          <button type="button" data-setting="assistant">AI 助手</button>
+          <button type="button" data-setting="qwen-api">Qwen 2.1 API Key</button>
+          <button type="button" data-setting="files">文件与缓存</button>
+          <button type="button" data-setting="app">应用偏好</button>
+          <button type="button" data-setting="diagnostics">关于与诊断</button>
+        </nav>
+        <main class="settings-content">
+          <div class="settings-search-wrap"><input class="settings-search" type="search" aria-label="搜索设置项" placeholder="搜索设置项" autocomplete="off" /><div class="settings-search-results" role="list" aria-label="设置搜索结果" hidden></div></div>
+          <div class="settings-pane" data-setting-pane="service">
+            <div class="settings-pane-head">
+              <div>
+                <h2>连接与服务</h2>
+                <p>查看本地服务状态，管理运行环境和连接入口</p>
+              </div>
+              <span class="badge settings-service-state">检查中</span>
+            </div>
+            <section class="settings-section">
+              <h2>启动</h2>
+              <div class="setting">
+                <div>
+                  <strong>生成服务手动启动</strong
+                  ><small>打开软件时保持停止；需要生成时点击“启动服务”</small>
+                </div>
+                <span class="badge">手动</span>
+              </div>
+              <div class="setting">
+                <div><strong>可选辅助运行时</strong><small>深度、Qwen 与 2× 超分首次使用时从魔塔下载并安装；云端生成不需要</small></div>
+                <div class="setting-control"><span class="badge aux-runtime-state">正在检查</span><button class="secondary aux-runtime-install" type="button">安装辅助运行时</button></div>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>提前启动 ComfyUI</strong
+                  ><small>减少首次提交等待，但会提前占用内存和部分显存</small>
+                </div>
+                <button
+                  class="toggle service-prestart-comfy"
+                  type="button"
+                  aria-label="提前启动 ComfyUI"
+                ></button>
+              </div>
+            </section>
+            <section class="settings-section">
+              <h2>服务连接</h2>
+              <div class="setting">
+                <div>
+                  <strong>本地服务地址</strong
+                  ><small>桌面端内嵌工作台和 API 使用此地址</small>
+                </div>
+                <div class="setting-control">
+                  <span class="path-field settings-service-address">http://127.0.0.1:7860</span
+                  ><button class="secondary service-copy-address" type="button">复制</button>
+                </div>
+              </div>
+              <div class="setting settings-danger">
+                <div>
+                  <strong>停止或重启服务</strong
+                  ><small>重启会等待当前请求结束；强制停止需要二次确认</small>
+                </div>
+                <div class="setting-control">
+                  <button class="secondary settings-stop-service" type="button">停止</button
+                  ><button class="secondary settings-restart-service" type="button">重启</button
+                  ><button class="primary settings-diagnose-service" type="button">状态诊断</button>
+                </div>
+              </div>
+            </section>
+            <section class="settings-section">
+              <h2>外部入口</h2>
+              <div class="setting">
+                <div>
+                  <strong>ComfyUI 画布</strong
+                  ><small>打开当前加速方案对应的可视化工作流</small>
+                </div>
+                <button class="secondary settings-open-canvas" type="button">打开画布</button>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>局域网地址</strong
+                  ><small>仅显示当前可用地址，并标记防火墙状态</small>
+                </div>
+                <button class="secondary settings-view-addresses" type="button">查看地址</button>
+              </div>
+            </section>
+          </div>
+
+          <div class="settings-pane" data-setting-pane="qwen-api">
+            <div class="settings-pane-head"><div><h2>Qwen 2.1 API Key</h2><p>创建命名密钥，分配给应用或开发者；生成任务和图片自动进入工作台。</p></div><button class="primary qwen-key-new" type="button">创建密钥</button></div>
+            <div class="qwen-keys-summary"><div><span>启用的密钥</span><strong class="qwen-active-total">0</strong></div><div><span>今日调用</span><strong class="qwen-calls-total">0</strong></div><div><span>API 图片</span><strong class="qwen-images-total">0</strong></div></div>
+            <section class="settings-section">
+              <div class="setting"><div><strong>API 接入地址</strong><small class="qwen-compat-status">正在读取兼容入口状态</small></div><code class="path-field qwen-compat-address">http://127.0.0.1:7860/qwen</code></div>
+              <div class="qwen-keys-toolbar"><strong>全部密钥 <small class="qwen-keys-count">0 个</small></strong><input class="qwen-key-search" type="search" aria-label="搜索 Qwen 密钥名称" placeholder="搜索密钥名称"><button class="secondary qwen-keys-refresh" type="button">刷新</button></div>
+              <div class="qwen-keys-table"><table><thead><tr><th>密钥名称</th><th>密钥</th><th>状态</th><th>今日调用</th><th>图片数</th><th>最近使用</th><th>操作</th></tr></thead><tbody class="qwen-keys-body"></tbody></table></div>
+              <p class="subtitle qwen-keys-state" role="status" aria-live="polite">进入本页后读取配置</p><button class="secondary qwen-keys-start" type="button" hidden>启动本机服务</button>
+            </section>
+            <section class="settings-section"><h2>旧项目迁移</h2><p class="subtitle qwen-migration-status">检查已有密钥迁移状态</p><details><summary>从旧 Qwen 项目导入</summary><div class="setting"><div><strong>旧项目位置</strong><small>留空自动查找同级 qwen2.1；重复导入不会覆盖当前 Key</small></div><input class="qwen-migration-path" type="text" aria-label="旧 Qwen 项目位置" placeholder="项目目录或 gallery.sqlite3 路径"></div><button class="secondary qwen-migrate" type="button">导入旧密钥和关联作品</button></details></section>
+            <dialog class="qwen-key-dialog" aria-label="创建 Qwen API 密钥"><button type="button" class="qwen-key-close" data-qwen-key-close aria-label="关闭密钥弹窗">×</button><form class="qwen-key-form"><h2>创建 API 密钥</h2><p class="subtitle">输入调用方名称，便于分配密钥和区分作品来源。</p><label>API 名称<input class="qwen-key-name" type="text" maxlength="32" required placeholder="例如：电商主图"></label><p class="qwen-key-form-state subtitle" role="status"></p><div class="qwen-key-dialog-actions"><button class="secondary" type="button" data-qwen-key-close>取消</button><button class="primary qwen-key-submit" type="submit">创建密钥</button></div></form><div class="qwen-key-created" hidden><h2>密钥已创建</h2><p class="qwen-created-name"></p><p class="subtitle">请复制给调用方，之后仍可在本机管理页查看。</p><code class="qwen-created-value"></code><div class="qwen-key-dialog-actions"><button class="secondary qwen-created-copy" type="button">复制密钥</button><button class="primary" type="button" data-qwen-key-close>完成</button></div></div></dialog>
+          </div>
+          <div class="settings-pane active" data-setting-pane="engine">
+            <div class="settings-pane-head">
+              <div><h2>生成方式</h2><p>选择任务运行的位置，只显示当前方式需要的配置</p></div>
+              <span class="badge engine-settings-state">正在读取</span>
+            </div>
+            <section class="settings-section">
+              <h2>视频生成方式</h2>
+              <div class="setting">
+                <div><strong>生成方式</strong><small>本地、平台云端、个人 API 或算力节点；切换后仅显示适用设置</small></div>
+                <select class="performance-engine" aria-label="视频生成方式"><option value="local">本地生成</option><option value="platform_h3">平台云端 · 账号积分</option><option value="compshare_h3">个人优云 API Key</option><option value="node">算力节点</option></select>
+              </div>
+            </section>
+            <section class="settings-section settings-mode-only" data-settings-modes="platform_h3" hidden>
+              <h2>平台云端</h2>
+              <p class="subtitle">使用当前平台账号积分生成视频；账号与余额在云端页面管理。</p>
+            </section>
+            <section class="settings-section compute-node-settings settings-mode-only" data-settings-modes="node" hidden>
+              <h2>算力节点</h2>
+              <p class="subtitle">连接局域网或公网穿透后的 MiniMax H3 服务。输入 IP、IP:端口或 HTTPS 地址；省略端口自动补 7890，公网映射时填写映射后的端口。生成、深度视频、任务和作品都在节点上运行。</p>
+              <div class="setting"><div><strong>节点地址</strong><small>示例：192.168.1.20:7890</small></div><input class="compute-node-address" type="text" spellcheck="false" autocomplete="off" placeholder="192.168.1.20:7890" aria-label="算力节点地址" /></div>
+              <div class="inline"><button class="secondary compute-node-connect" type="button">连接并使用</button><button class="secondary compute-node-test" type="button">检测连接</button><span class="subtitle compute-node-state">尚未配置</span></div>
+            </section>
+            <section class="settings-section cloud-h3-settings settings-mode-only" data-settings-modes="compshare_h3" hidden>
+              <h2>优云智算 H3 · 视频生成 API</h2>
+              <p class="subtitle">API Key 仅保存在当前 Windows 用户的加密配置中，用于视频生成与积分查询。</p>
+              <div class="setting"><div><strong>模型 API Key</strong><small>以 sk-ml- 开头；留空保存会清除已配置密钥</small></div><input class="cloud-h3-key" type="password" autocomplete="off" placeholder="sk-ml-…" aria-label="优云智算 H3 API Key" /></div>
+              <div class="inline"><button class="secondary cloud-h3-save" type="button">保存 API Key</button><button class="secondary cloud-h3-refresh" type="button">查询积分</button><span class="subtitle cloud-h3-state">读取中</span></div>
+            </section>
+            <section class="settings-section settings-mode-only" data-settings-modes="platform_h3 compshare_h3" hidden>
+              <h2>优云克隆</h2>
+              <div class="setting">
+                <div><strong>提交视频参考类型</strong><small>仅影响优云克隆新任务；深度视频是专业参考，不等同本地逐帧深度控制</small></div>
+                <select class="performance-cloud-clone-reference" aria-label="优云克隆提交视频参考类型">
+                  <option value="source">原视频 · 默认</option>
+                  <option value="depth">深度视频 · 专业</option>
+                </select>
+              </div>
+            </section>
+          </div>
+
+          <div class="settings-pane active settings-mode-only" data-setting-pane="performance" data-settings-modes="local">
+            <div class="settings-pane-head">
+              <div>
+                <h2>本地生成</h2>
+                <p>配置加速方案、显存预算和内容模型；仅影响本地任务</p>
+              </div>
+              <span class="badge performance-settings-state">正在读取</span>
+            </div>
+            <section class="settings-section">
+              <h2>推理</h2>
+              <div class="setting">
+                <div>
+                  <strong>加速方案</strong
+                  ><small
+                    >新提交任务使用所选方案，已排队任务保留提交时配置</small
+                  >
+                </div>
+                <select class="performance-acceleration">
+                  <option value="turbo_8step_sage">Turbo 8-step + SageAttention</option>
+                  <option value="turbo_8step">Turbo 8-step LoRA</option>
+                  <option value="sage_attention">SageAttention</option>
+                  <option value="standard">标准 Attention</option>
+                </select>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>默认采样步数</strong
+                  ><small>Turbo 固定 8 步；其他方案作为工作台默认值</small>
+                </div>
+                <select class="performance-default-steps">
+                  <option value="12">12 Steps</option>
+                  <option value="8">8 Steps</option>
+                  <option value="16">16 Steps</option>
+                </select>
+              </div>
+
+            </section>
+            <section class="settings-section">
+              <h2>显存</h2>
+              <div class="setting">
+                <div>
+                  <strong>办公显存预留</strong
+                  ><small>限制模型预算并为桌面和其他 GPU 软件保留空间</small>
+                </div>
+                <select class="performance-vram-reserve">
+                  <option value="2">2 GB · 办公推荐</option>
+                  <option value="0">0 GB · 完全放开</option>
+                  <option value="1">1 GB · 性能优先</option>
+                  <option value="3">3 GB · 多任务优先</option>
+                  <option value="4">4 GB · 流畅优先</option>
+                </select>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>任务完成后释放 GPU 缓存</strong
+                  ><small>降低空闲显存占用，会增加下一次模型恢复时间</small>
+                </div>
+                <button
+                  class="toggle performance-free-cache"
+                  type="button"
+                  aria-label="完成后释放 GPU 缓存"
+                ></button>
+              </div>
+            </section>
+            <details class="settings-advanced">
+              <summary>高级模型与参考设置<small>多参考权重和内容模型按需调整</small></summary>
+              <section class="settings-section">
+                <h2>参考模型</h2>
+                <div class="setting">
+                  <div><strong>工作台多参考权重</strong><small>轻量复用旧 FL2VA 权重，可生成但参考一致性较弱；原始使用约 21GB 的 Ref2VA 专用权重，首次使用自动下载。首尾帧与克隆中心不受此项影响。</small></div>
+                  <select class="performance-reference-model" aria-label="工作台多参考权重">
+                    <option value="fl2va">轻量 · 复用已安装权重</option>
+                    <option value="ref2va">原始 · Ref2VA 专用权重</option>
+                  </select>
+                </div>
+              </section>
+              <section class="settings-section">
+                <h2>内容模型</h2>
+              <div class="setting">
+                <div>
+                  <strong>启用 NSFW 模型</strong
+                  ><small>默认关闭；开启后仅在匹配任务中按需加载</small>
+                </div>
+                <button
+                  class="toggle performance-nsfw"
+                  type="button"
+                  aria-label="启用 NSFW 模型"
+                ></button>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>模型方案</strong
+                  ><small>选择与生成模式兼容的内容模型</small>
+                </div>
+                <select class="performance-nsfw-profile">
+                  <option value="aftermidnight">AfterMidnight v1.2 · Ref2VA</option>
+                  <option value="naughtytimes_standard">NaughtyTimes v3 · 标准编码器</option>
+                  <option value="naughtytimes">NaughtyTimes + Heretic · 实验</option>
+                </select>
+              </div>
+              </section>
+            </details>
+          </div>
+
+          <div class="settings-pane active" data-setting-pane="upscale">
+            <div class="settings-pane-head"><div><h2>视频超分</h2><p>应用于本机作品超分及本地克隆生成后 2× 超分；算力节点使用节点自身配置</p></div><span class="badge upscale-settings-state" role="status">尚未检测</span></div>
+            <section class="settings-section">
+              <div class="setting"><div><strong>超分引擎</strong><small>Real-ESRGAN 使用辅助运行时；Topaz 使用本机安装</small></div><select class="upscale-engine" aria-label="超分引擎"><option value="realesrgan">Real-ESRGAN 2×</option><option value="topaz">Topaz Video 2×</option></select></div>
+              <div class="setting topaz-path-row"><div><strong>Topaz 安装路径</strong><small>选择包含 ffmpeg.exe 的安装目录，或留空自动识别</small></div><div class="topaz-controls"><input class="topaz-path" aria-label="Topaz 安装路径" type="text" placeholder="自动识别本机 Topaz" /><button type="button" class="secondary topaz-pick">选择目录</button><button type="button" class="secondary topaz-detect">检测路径</button><button type="button" class="secondary topaz-auto">自动识别</button></div></div>
+              <div class="setting"><div><strong>Topaz 模型</strong><small class="topaz-install-info">检测后显示当前安装中的经典模型；首次使用缺失权重时由 Topaz 下载</small></div><select class="topaz-model" aria-label="Topaz 模型" disabled><option value="">请先检测 Topaz</option></select></div>
+              <div class="setting topaz-status-row"><div><strong>星光 2.6 / Starlight Precise</strong><small class="topaz-starlight">检测后显示兼容情况</small></div></div>
+              <div class="upscale-actions"><button type="button" class="primary upscale-save">保存超分设置</button><small>新设置用于后续超分，原片与已生成版本分别保留</small></div>
+            </section>
+          </div>
+          <div class="settings-pane active" data-setting-pane="clone"><div class="settings-pane-head"><div><h2>深度视频</h2><p>默认模式、Qwen 人物解析与生成后超分继续在深度视频功能页管理</p></div></div><button type="button" class="open-clone-settings">打开深度视频设置</button></div>
+          <div class="settings-pane" data-setting-pane="assistant">
+            <div class="settings-pane-head">
+              <div>
+                <h2>AI 助手</h2>
+                <p>管理用于提示词优化的 OpenAI 兼容接口与模型</p>
+              </div>
+              <span class="badge assistant-global-state">未配置</span>
+            </div>
+            <div class="provider-toolbar">
+              <div>
+                <h3>API 配置</h3>
+                <p class="subtitle">按顺序使用可用配置，失败时自动切换</p>
+              </div>
+              <div class="inline"><button class="secondary test-api-chat" type="button">测试 API</button><button class="primary add-provider" type="button">
+                添加 API
+              </button></div>
+            </div>
+            <div class="provider-list">
+              <div class="provider-picker" role="list" aria-label="已保存的 API 配置"></div>
+              <dialog class="provider-dialog" aria-label="API 配置"><article class="provider-card">
+                <div class="provider-card-head">
+                  <div>
+                    <h3 class="provider-name">未配置接口</h3>
+                    <p class="subtitle provider-state">
+                      请填写并保存 API 配置
+                    </p>
+                  </div>
+                  <div class="provider-card-head-actions">
+                    <button class="provider-collapse" type="button" aria-label="收起 API 配置" aria-expanded="true"></button>
+                    <button
+                      class="toggle"
+                      type="button"
+                      aria-label="启用主要优化接口"
+                    ></button>
+                  </div>
+                </div>
+                <div class="provider-card-body">
+                  <div class="provider-form"><label class="provider-field full"><span>供应商</span><select class="provider-preset" aria-label="供应商"></select></label>
+                    <label class="provider-field"
+                      ><span>配置名称</span
+                      ><input class="provider-config-name" value="" aria-label="配置名称"
+                    /></label>
+                    <label class="provider-field"
+                      ><span>接口协议</span
+                      ><select class="api-type">
+                        <option>OpenAI Chat Completions API</option>
+                        <option>OpenAI Responses API</option>
+                      </select></label
+                    >
+                    <label class="provider-field full"
+                      ><span>服务地址</span
+                      ><input
+                        class="provider-base-url"
+                        value=""
+                        placeholder="输入 IP+端口或域名，例如 127.0.0.1:8000"
+                        aria-label="服务地址"
+                      /><small class="url-preview"
+                        >请输入服务地址</small
+                      ></label
+                    >
+                    <label class="provider-field full"
+                      ><span>API Key</span
+                      ><input
+                        class="provider-api-key"
+                        type="password"
+                        value=""
+                        aria-label="API Key"
+                    /></label>
+                    <div class="model-picker">
+                      <div class="model-picker-head">
+                        <label
+                          class="model-option"
+                          style="border: 0; background: transparent; padding: 0"
+                          ><input class="auto-models" type="checkbox" checked />
+                          自动获取模型</label
+                        >
+                        <div class="inline">
+                          <button class="secondary fetch-models" type="button">
+                            获取模型</button
+                          ><button
+                            class="secondary test-provider"
+                            type="button"
+                          >
+                            测试连接
+                          </button>
+                        </div>
+                      </div>
+                      <div class="model-options"><span class="subtitle">尚未获取模型</span></div>
+                      <div class="inline"><input class="manual-model" aria-label="手动模型 ID" placeholder="接口不支持模型列表时填写模型 ID" /><button class="secondary add-model" type="button">添加模型</button></div>
+                      <div class="model-row">
+                        <span class="subtitle">默认优化模型</span
+                        ><select class="filter-select provider-default-model">
+                          <option>未选择模型</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="inline"
+                    style="justify-content: flex-end; margin-top: 12px"
+                  >
+                    <button class="secondary delete-provider" type="button">
+                      删除配置</button
+                    ><button class="primary save-provider" type="button">
+                      保存配置
+                    </button>
+                  </div>
+                </div>
+              </article></dialog>
+            </div>
+            <dialog class="assistant-chat-dialog" aria-label="测试 API 对话"><div class="dialog-heading"><h2>测试 API</h2><button type="button" class="close-chat">关闭</button></div><label class="provider-field"><span>测试接口</span><select class="chat-provider"></select></label><p class="subtitle">发送消息验证所选模型是否真实可用。</p><div class="chat-messages" role="log" aria-live="polite"></div><form class="chat-form"><textarea class="chat-input" aria-label="测试消息" rows="3" placeholder="输入测试消息">你好，请简单介绍一下你自己。</textarea><div class="inline"><span class="chat-state" role="status"></span><button class="primary chat-send" type="submit">发送</button></div></form></dialog>
+            <div class="skill-status">
+              <div>
+                <strong>MiniMax H3 官方提示词 Skill</strong
+                ><small
+                  >生成前自动规范需求；解析参考图片和视频抽帧，按素材用途绑定主体与引用，音频只读取元数据</small
+                >
+              </div>
+              <span class="badge">已内置</span>
+            </div>
+          </div>
+
+
+          <div class="settings-pane" data-setting-pane="storage">
+            <div class="settings-pane-head">
+              <div>
+                <h2>文件与缓存</h2>
+                <p>区分作品文件、任务数据和可再生缓存</p>
+              </div>
+              <span class="subtitle">正在读取存储状态</span>
+            </div>
+            <section class="settings-section">
+              <h2>目录</h2>
+              <div class="setting install-directory-setting">
+                <div>
+                  <strong>MiniMax 安装目录</strong>
+                  <small class="install-directory-state">正在识别</small>
+                </div>
+                <div class="install-directory-control">
+                  <input class="install-directory-input" type="text" aria-label="MiniMax 安装目录" autocomplete="off" spellcheck="false" placeholder="未找到安装目录" />
+                  <select class="install-directory-candidates" aria-label="匹配的安装目录" hidden></select>
+                  <div class="install-directory-actions">
+                    <button class="secondary install-directory-pick" type="button">选择目录</button>
+                    <button class="secondary install-directory-apply" type="button">应用</button>
+                    <button class="secondary install-directory-detect" type="button">自动识别</button>
+                  </div>
+                </div>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>作品输出目录</strong
+                  ><small>视频文件和作品索引的默认保存位置</small>
+                </div>
+                <div class="setting-control">
+                  <span class="path-field storage-output-path">正在读取</span
+                  ><button class="secondary storage-open-output" type="button">打开</button>
+                </div>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>作品下载方式</strong>
+                  <small>手动保存每次选择路径；快速保存直接写入指定目录</small>
+                </div>
+                <select class="storage-download-mode" aria-label="作品下载方式">
+                  <option value="manual">手动保存</option>
+                  <option value="quick">快速保存</option>
+                </select>
+              </div>
+              <div class="setting storage-download-directory-setting" hidden>
+                <div>
+                  <strong>快速保存目录</strong>
+                  <small class="storage-download-directory">尚未选择目录</small>
+                </div>
+                <button class="secondary storage-pick-download-directory" type="button">选择目录</button>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>任务数据库</strong
+                  ><small class="storage-database-path">正在读取 SQLite 任务数据库状态</small>
+                </div>
+                <div class="setting-control">
+                  <button class="secondary storage-open-data" type="button">打开位置</button>
+                </div>
+              </div>
+            </section>
+            <section class="settings-section">
+              <h2>缓存</h2>
+              <div class="setting">
+                <div>
+                  <strong>未引用参考图</strong
+                  ><small>正在扫描未引用副本</small>
+                </div>
+                <button class="secondary storage-clear-refs" type="button">扫描并清理</button>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>后端模型缓存</strong
+                  ><small>释放内存与显存驻留，不删除模型文件</small>
+                </div>
+                <button class="secondary storage-free-backend" type="button">立即释放</button>
+              </div>
+            </section>
+          </div>
+
+          <div class="settings-pane" data-setting-pane="window">
+            <div class="settings-pane-head">
+              <div>
+                <h2>关闭与后台</h2>
+                <p>控制桌面窗口、后台运行和通知行为</p>
+              </div>
+            </div>
+            <section class="settings-section">
+              <h2>窗口</h2>
+              <div class="setting">
+                <div>
+                  <strong>关闭按钮行为</strong
+                  ><small>生成过程中建议最小化到托盘，避免任务中断</small>
+                </div>
+                <select class="window-close-behavior">
+                  <option value="minimize_to_tray">最小化到系统托盘</option>
+                  <option value="stop_service_and_exit">停止托管服务并退出</option>
+                </select>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>F11 全屏</strong
+                  ><small>在工作台和作品预览中允许切换全屏</small>
+                </div>
+                <button
+                  class="toggle window-f11"
+                  type="button"
+                  aria-label="启用 F11 全屏"
+                ></button>
+              </div>
+            </section>
+          </div>
+
+          <div class="settings-pane" data-setting-pane="appearance">
+            <div class="settings-pane-head">
+              <div>
+                <h2>显示</h2>
+                <p>完整复用 SHIYIN-AI 的三套主题体系</p>
+              </div>
+            </div>
+            <section class="settings-section">
+              <h2>主题</h2>
+              <div class="setting">
+                <div>
+                  <strong>颜色模式</strong
+                  ><small
+                    >三套主题均使用独立的背景、面板、文字、边框和投影令牌</small
+                  >
+                </div>
+                <div class="choice theme-choice">
+                  <button
+                    class="appearance-theme-ivory"
+                    type="button"
+                    data-theme-name="ivory"
+                  >
+                    象牙白</button
+                  ><button
+                    class="active appearance-theme-night"
+                    type="button"
+                    data-theme-name="night"
+                  >
+                    星夜黑</button
+                  ><button
+                    class="appearance-theme-pure"
+                    type="button"
+                    data-theme-name="pure"
+                  >
+                    醇享白
+                  </button>
+                </div>
+              </div>
+            </section>
+            <section class="settings-section">
+              <h2>显示</h2>
+              <div class="setting">
+                <div>
+                  <strong>减少动态效果</strong
+                  ><small>关闭页面切换和状态反馈中的非必要动画</small>
+                </div>
+                <button
+                  class="toggle appearance-reduce-motion"
+                  type="button"
+                  aria-label="减少动态效果"
+                ></button>
+              </div>
+            </section>
+          </div>
+
+          <div class="settings-pane" data-setting-pane="update">
+            <div class="settings-pane-head"><div><h2>软件更新</h2></div><span class="badge update-state">正在读取</span></div>
+            <section class="settings-section">
+              <h2>更新策略</h2>
+              <div class="setting"><div><strong>检查方式</strong></div><select id="updatePolicy"><option value="automatic">自动检查并下载</option><option value="manual">仅手动检查</option><option value="disabled">关闭更新</option></select></div>
+              <div class="setting"><div><strong>下载网络</strong></div><select id="updateNetworkMode"><option value="direct">直连</option><option value="manualProxy">手动代理</option></select></div>
+              <div class="setting settings-proxy-setting" hidden><div><strong>手动代理地址</strong></div><input id="updateManualProxy" type="url" placeholder="http://127.0.0.1:7890"></div>
+            </section>
+            <section class="settings-section"><h2>版本</h2><div class="setting"><div><strong class="update-version">当前版本 0.4.138</strong><small class="update-notes"></small></div><button class="secondary update-check" type="button">检查更新</button></div><div class="setting"><div><strong class="update-result">尚未检查</strong></div><button class="secondary update-install" type="button" hidden>立即更新</button></div></section>
+          </div>
+
+          <div class="settings-pane" data-setting-pane="about">
+            <div class="settings-pane-head">
+              <div>
+                <h2>关于与诊断</h2>
+                <p>版本、运行环境和问题诊断</p>
+              </div>
+            </div>
+            <div class="about-block">
+              <div class="about-logo">H3</div>
+              <div>
+                <h2>MiniMax Studio</h2>
+                <p class="subtitle">桌面端 0.4.138 · Windows x64</p>
+              </div>
+            </div>
+            <section class="settings-section">
+              <h2>组件版本</h2>
+              <div class="setting">
+                <div>
+                  <strong>桌面框架</strong><small>Tauri 2 · WebView2</small>
+                </div>
+                <span class="badge">正常</span>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>生成服务</strong
+                  ><small>Python API · http://127.0.0.1:7860</small>
+                </div>
+                <span class="badge about-service-state">正在检查</span>
+              </div>
+              <div class="setting">
+                <div>
+                  <strong>ComfyUI 与 H3 节点</strong
+                  ><small>显示当前工作流依赖检查结果</small>
+                </div>
+                <span class="badge about-backend-state">正在检查</span>
+              </div>
+            </section>
+            <section class="settings-section">
+              <h2>支持与诊断</h2>
+              <div class="setting">
+                <div>
+                  <strong>服务日志</strong
+                  ><small>打开本次运行日志，便于定位启动或生成失败</small>
+                </div>
+                <button class="secondary about-open-log" type="button">打开日志</button>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <div
+      class="modal-layer prompt-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="作品提示词"
+    >
+      <button class="modal-close" type="button" aria-label="关闭提示词">
+        ×
+      </button>
+      <div class="prompt-dialog"><h2>作品提示词</h2><p>请选择作品后查看提示词。</p></div>
+    </div>
+    <div
+      class="modal-layer player-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="全屏作品播放器"
+    >
+      <button class="modal-close" type="button" aria-label="关闭播放器">
+        ×
+      </button>
+      <div class="fullscreen-player">
+        <div class="fullscreen-stage media-viewport">
+          <span class="play player-stage-toggle">▶</span>
+        </div>
+        <div class="player-controls">
+          <button class="player-toggle" type="button" aria-label="播放">
+            ▶</button
+          ><input
+            class="player-progress"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            aria-label="播放进度"
+          /><span class="player-time">00:00 / 00:00</span>
+          <button class="player-tool player-reset-view" type="button" aria-label="复位画面" title="复位画面">↺</button>
+          <button class="player-tool player-download" type="button">下载</button>
+        </div>
+        <p class="player-title">未选择作品</p>
+      </div>
+    </div>
+    <dialog class="compute-node-dialog qwen-key-dialog" aria-labelledby="compute-node-dialog-title">
+      <form class="compute-node-form">
+        <h2 id="compute-node-dialog-title">连接算力节点</h2>
+        <label>算力节点地址<input class="compute-node-dialog-address" type="text" spellcheck="false" autocomplete="off" placeholder="IP:端口 或 HTTPS 地址" aria-label="连接算力节点地址" required /></label>
+        <p class="compute-node-dialog-status subtitle" role="status" aria-live="polite">输入节点地址，确认后检查连接。</p>
+        <div class="qwen-key-dialog-actions"><button class="secondary compute-node-dialog-cancel" type="button">取消</button><button class="primary compute-node-dialog-confirm" type="submit">确定</button></div>
+      </form>
+    </dialog>
+    <div class="task-menu-layer" hidden></div>
+    <nav class="dock" aria-label="主要功能">
+      <button
+        class="active"
+        type="button"
+        data-target="overview"
+        aria-pressed="true"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            d="M4 13h6V4H4v9Zm10 7h6V11h-6v9ZM4 20h6v-3H4v3Zm10-13h6V4h-6v3Z"
+          /></svg
+        ><span>概览</span></button
+      ><button type="button" data-target="image" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m4 17 5-5 4 4 3-3 5 5"/></svg><span>图片创作</span></button
+      ><button type="button" data-target="workbench" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M4 5h16v14H4zM8 9h8M8 13h5" /></svg
+        ><span>视频创作</span></button
+      ><button type="button" data-target="clone" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <rect x="4" y="7" width="11" height="10" rx="2" />
+          <path d="M8 4h8a2 2 0 0 1 2 2v8M8 11h4M10 9l2 2-2 2M16 16h4m0 0-2-2m2 2-2 2" />
+        </svg
+        ><span>克隆中心</span></button
+      ><button type="button" data-target="works" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M4 6h16v12H4zM8 3h8M9 10l6 3-6 3v-6Z" /></svg
+        ><span>作品管理</span></button
+      ><button type="button" data-target="settings" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A7 7 0 0 0 15 6l-.3-2.6h-4L10.5 6A7 7 0 0 0 9 7.1l-2.4-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A7 7 0 0 0 10.5 18l.2 2.6h4L15 18a7 7 0 0 0 1.5-1.1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1Z"
+          /></svg
+        ><span>设置</span></button
+      ><i class="dock-divider"></i
+      ><button
+        class="mini-status"
+        type="button"
+        aria-label="正在检查服务状态"
+        title="正在检查服务状态"
+      >
+        ●
+      </button>
+    </nav>
+  </div>
+  <iframe class="platform-shell" data-src="./cloud-mode/index.html?embedded=1" title="MiniMax Studio 云端模式" hidden></iframe>
+  <script type="module" src="/assets/desktop-bridge.js?v=20261018-web-settings"></script>
+
+</div>
+<script type="module" src="/assets/public-release.js"></script></body></html>

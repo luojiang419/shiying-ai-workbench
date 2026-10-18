@@ -1,0 +1,14 @@
+[
+  {
+    "name": "cudart-llama-b11100-bin-ubuntu-cuda-12.8-x64.tar.gz",
+    "size": 594373572,
+    "digest": "sha256:2995c4e197dc902ff49d84ed7205f778265003a45ab12458326b68a9a1c399a3",
+    "browser_download_url": "https://github.com/ggml-org/llama.cpp/releases/download/b11100/cudart-llama-b11100-bin-ubuntu-cuda-12.8-x64.tar.gz"
+  },
+  {
+    "name": "llama-b11100-bin-ubuntu-cuda-12.8-x64.tar.gz",
+    "size": 168859281,
+    "digest": "sha256:0c2760191235883837900443104f61ba10149b91f0a803f93ddc9e3abf9fc269",
+    "browser_download_url": "https://github.com/ggml-org/llama.cpp/releases/download/b11100/llama-b11100-bin-ubuntu-cuda-12.8-x64.tar.gz"
+  }
+]

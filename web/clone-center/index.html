@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>克隆中心 · MiniMax Studio</title>
+    <link rel="stylesheet" href="style.css?v=20261018-native-cloud-clone" />
+  <link rel="stylesheet" href="../motion.css?v=20261018-web-navigation"><script src="../motion.js?v=20261018-web-navigation" defer></script></head>
+  <body data-clone-mobile-view="flow" data-input-workflow="materials">
+    <header class="titlebar" hidden>
+      <div class="brand">
+        <span class="brandmark">H3</span><strong>MiniMax Studio</strong
+        ><span class="muted">克隆中心</span>
+      </div>
+      <span class="badge">本地模型 · 真实处理</span>
+    </header>
+    <main>
+      <div class="pagehead">
+        <div>
+          <a class="web-back-link" href="/" aria-label="返回 MiniMax H3 生成页">MiniMax H3</a>
+          <h1>克隆中心</h1>
+          <p>添加参考视频和素材，在提示词中输入 @ 调用素材并描述需求；配置 AI 助手后自动优化；未配置时使用默认克隆模板。</p>
+        </div>
+        <span id="cloudPoints" class="badge" hidden title="优云智算 H3 当前可用积分">优云智算积分 --</span>
+      </div>
+      <div id="cloneLayout" class="layout">
+        <aside id="assetsPanel" class="panel guide assetsarea" aria-label="参考素材与提示词">
+          <div class="panelhead">
+            <strong>参考素材</strong><div class="assets-head-actions"><span class="muted">视频 / 图片</span><button id="clearInput" type="button">清空输入</button></div>
+          </div>
+          <div class="guide-scroll">
+          <section class="step goal-step legacy-clone-control">
+            <label class="field">这次想做什么<select id="generationGoal">
+              <option value="replace">替换原片人物（推荐）</option>
+              <option value="reference">自由参考创作（允许变化）</option>
+            </select></label>
+            <small id="goalHint">原视频提供动作，人物图提供新身份与服装。</small>
+          </section>
+          <section class="step video-reference">
+            <div class="stephead">
+              <strong>参考视频</strong><div id="sourceReference"></div>
+            </div>
+            <button class="upload" id="uploadVideo">
+              <span id="uploadPlaceholder"><b>选择本地视频</b><small>或拖入 MP4 / WebM 视频</small></span>
+              <video id="uploadPreview" muted playsinline preload="metadata" hidden aria-hidden="true"></video>
+              <span id="uploadReplace" hidden>点击更换视频</span>
+            </button>
+            <p id="filename" class="muted filename">尚未添加视频</p>
+            <p id="sourceUploadError" class="material-upload-error" role="alert" hidden></p>
+            <button id="retryVideoUpload" type="button" class="wide" hidden>重试上传视频</button>
+            <button id="peopleMode" class="wide legacy-clone-control" disabled>
+              选择单人 / 多人
+            </button>
+          </section>
+          <section class="step legacy-clone-control">
+            <div class="stephead">
+              <span class="num">3</span><strong>选择参考方式</strong>
+            </div>
+            <label class="field">视频参考方式<select id="referenceMode">
+                <option value="prompt_video" selected>纯提示词轻量克隆（默认）</option>
+                <option value="extracted_depth">自动深度复刻（替换人物）</option>
+                <option value="depth_video">已有深度视频（结构参考）</option>
+                <option value="source_video">自由原片参考（人物 / 动作可能变化）</option>
+                <option value="region_video">指定演员区域替换（本地 · 实验）</option>
+              </select></label>
+            <small id="referenceModeHint">原视频、人物图与提示词直接生成，无需提取深度。</small>
+            <section id="regionOptions" hidden>
+              <p>仅替换一个演员。每段以选中区间起点为0秒，按镜头填写；每次切镜单独添加一段，观众等未选镜头保留原片。</p>
+              <div class="region-times">
+                <label>开始秒<input id="regionStart" type="number" min="0" step="0.041667" value="0" /></label>
+                <label>结束秒<input id="regionEnd" type="number" min="0" step="0.041667" value="2" /></label>
+              </div>
+              <button id="regionDraw" type="button" class="wide">在源视频画框选演员</button>
+              <small id="regionBoxHint">暂停到该段首帧，紧贴目标演员画框；系统会逐帧跟踪。</small>
+              <details><summary>用坐标修正范围（百分比）</summary><div class="region-coordinates">
+                <label>左<input id="regionLeft" type="number" min="0" max="100" value="30" /></label>
+                <label>上<input id="regionTop" type="number" min="0" max="100" value="10" /></label>
+                <label>右<input id="regionRight" type="number" min="0" max="100" value="70" /></label>
+                <label>下<input id="regionBottom" type="number" min="0" max="100" value="95" /></label>
+              </div></details>
+              <label class="field">遮罩方式<select id="regionFill"><option value="track">视频跟踪轮廓（推荐）</option><option value="auto">逐帧自动轮廓（兼容）</option><option value="crop">局部精细轮廓（远景兼容）</option><option value="box">整框补全（可能损失动作）</option></select></label>
+              <small>视频跟踪会用 SAM 2 从该段首帧锁定指定演员，再用 quality 人物分割补全头发、四肢和服装边界；生成后只回贴人物区域。跟踪断裂会停止输出。</small>
+              <button id="regionAdd" type="button" class="wide">添加这段演员范围</button>
+              <button id="regionCancelDraft" type="button" class="wide" hidden>取消当前画框草稿</button>
+              <div id="regionList" class="region-list"></div>
+              <button id="regionPrepare" type="button" class="wide">准备遮罩预览</button>
+              <video id="regionPreview" controls playsinline preload="metadata" hidden></video>
+              <p id="regionReviewHint">确认范围后会生成完整绿色跟踪预览。</p>
+              <label><input id="regionConfirm" type="checkbox" disabled />我已检查完整预览，遮罩覆盖演员且没有误选他人</label>
+            </section>
+            <div id="depthExtractionOptions">
+            <label class="field"
+              >深度视频模式<select id="depthMode">
+                <option value="portrait">人像 · 优先复刻人物动作</option>
+                <option value="professional">专业 · 同时保留空间结构</option>
+              </select></label
+            ><div class="depth-actions"><button id="extract" class="wide" disabled>提取深度视频</button><button id="depthAdjustOpen" class="wide" type="button" hidden>深度调参</button></div>
+            <label class="person-mask-option"><input id="personMask" type="checkbox" />黑底人物遮罩（实验）</label>
+            <small>勾选后自动切换为人像模式，使用 quality · BiRefNet 人物分割；切回专业模式会关闭遮罩。深度模型保持原设置。首次使用从魔塔自动补齐模型与依赖，并用于本次提取。</small>
+            <p id="depthHint">Small · 完整场景深度</p>
+            </div>
+            <button id="analyze" class="wide" hidden disabled>
+              解析视频人数
+            </button>
+          </section>
+            <section class="reference-assets" aria-label="参考图片">
+              <div class="assetscontent">
+                <div class="assethead">
+                  <strong>参考图片</strong
+                  ><span id="assetCount" class="muted">0 位人物</span>
+                </div>
+                <div class="material-grid" aria-label="拖入参考图片">
+                  <div id="materialSlots" class="material-slots"></div>
+                  <button id="addMaterials" type="button" title="添加或拖入参考图片，最多 9 张"><span aria-hidden="true">＋</span><small>添加图片</small></button>
+                </div>
+                <div id="materialUploadError" class="material-upload-error" role="alert" hidden></div>
+                <input id="materialFiles" type="file" accept="image/*" multiple hidden />
+                <div class="assettools legacy-clone-control">
+                <div id="peopleTools" class="peopletools" hidden>
+                  <label
+                    >修正人数
+                    <select id="personCount">
+                      <option>1</option>
+                      <option selected>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                      <option>6</option>
+                      <option>7</option>
+                      <option>8</option>
+                      <option>9</option>
+                    </select></label
+                  >
+                </div>
+                <label id="personPicker" hidden>当前人物<select id="activePerson" aria-label="当前配置人物"></select></label>
+                </div>
+                <div id="slots" class="legacy-clone-control">
+                  <div class="slotempty">
+                    <strong>添加人物参考图</strong><span>先导入视频，再选择单人或多人</span>
+                  </div>
+                </div>
+                <button id="cloudSceneOpen" class="wide" type="button" hidden>配置背景场景</button>
+
+              </div>
+            </section>
+          </div>
+          <section class="promptarea" aria-label="提示词与生成">
+                  <div id="materialEditor" class="supplement-field">
+                    <label for="supplement">提示词</label>
+                    <select id="supplementTarget" class="legacy-clone-control" aria-label="生成需求作用对象"><option value="all">按文字指定对象</option></select>
+                    <div class="material-prompt-wrap"><textarea id="supplement" class="work-prompt" rows="6" maxlength="7000" aria-label="生成需求" placeholder="输入 @ 选择素材，例如：将 <Video 1> 中的鸭子替换为 <Picture 1> 的外观，保持原片动作和镜头。"></textarea><div id="materialMentionMenu" class="mention-menu" role="listbox" aria-label="引用素材"></div></div>
+                    <small id="supplementState">提交后结合素材自动规划，不会带入下一条视频。</small>
+                    <p id="materialOptimizerState" class="muted" role="status"></p>
+                    <div id="lightweightPromptPreview" hidden><button id="lightweightPromptOpen" class="quiet" type="button">预览最终提示词</button></div>
+                  </div>
+              <div class="workspacefoot">
+                <button id="useRecommended" class="quiet" type="button" hidden>改用人物替换</button>
+                <p id="generateHint" class="error" role="status" hidden></p>
+                <button id="completePerson" class="quiet" type="button" hidden>配置缺图人物</button>
+                <button id="generate" class="primary" disabled>开始替换人物</button>
+              </div>
+          </section>
+          <button id="settingsOpen" class="wide settingslink legacy-clone-control">
+            深度视频与模型设置
+          </button>
+        </aside>
+        <section class="workspace panel">
+          <div class="panelhead">
+            <div class="tabs">
+              <button id="sourceTab" class="active">源视频</button
+              ><button id="depthTab">深度视频</button
+              ><button id="resultTab" hidden>生成结果</button
+              ><button id="assetsToggle" type="button" aria-expanded="false" aria-controls="assetsPanel">素材与提示词</button
+              ><button id="parametersToggle" class="parameters-toggle" type="button" aria-expanded="false" aria-controls="generationParameters">生成参数</button>
+            </div>
+            <div class="workspace-meta">
+              <span id="sourceMeta" class="muted">等待素材</span>
+            </div>
+          </div>
+          <section id="generationParameters" class="generation-parameters" hidden aria-label="生成参数配置">
+            <label class="local-generation-field"><span>画幅比例</span><select id="resolutionAspect"></select><small id="aspectHint">导入视频后自动匹配 H3 画幅</small></label>
+            <label class="local-generation-field" for="resolutionSize"><span>分辨率</span><select id="resolution" hidden aria-hidden="true" tabindex="-1"><option value="0.2MP 16:9 - 608x352">0.2MP · 16:9 · 608×352</option></select><select id="resolutionSize"></select></label>
+            <label class="cloud-generation-field" hidden><span>云端分辨率</span><select id="cloudResolution"><option>480P</option><option>768P</option><option>1080P</option><option>2K</option><option>4K</option></select></label>
+            <label class="cloud-generation-field" hidden><span>视频比例</span><select id="cloudRatio"><option>16:9</option><option>21:9</option><option>4:3</option><option>1:1</option><option>3:4</option><option>9:16</option></select></label>
+            <label class="cloud-generation-field" hidden><span>生成时长（秒）</span><input id="cloudDuration" type="number" min="4" max="30" step="1" value="5" /></label>
+            <div class="local-generation-field"><span>时长</span><output id="parameterDuration">-- 秒</output></div>
+            <label class="local-generation-field"><span>采样步数</span><input id="steps" type="number" min="4" max="50" step="1" value="20" /></label>
+            <label class="local-generation-field"><span>动作贴合力度</span><input id="controlStrength" type="number" min="0.5" max="2" step="0.1" value="1" /><small>提高结构约束；过高可能降低画质，仍需检查动作和切镜</small></label>
+            <label class="local-generation-field"><span>Seed</span><input id="seed" inputmode="numeric" placeholder="留空随机" /></label>
+            <label class="local-generation-field"><span>画质提升</span><input id="upscale" type="checkbox" checked />生成后 2× 超分</label>
+          </section>
+          <div class="editor">
+            <div class="videoarea">
+              <div class="viewport" id="dropzone">
+                <video id="video" playsinline preload="metadata"></video>
+                <div id="regionSelection" class="region-selection" hidden aria-label="在源视频拖动画框"><div id="regionSelectionBox"></div></div>
+                <video
+                  id="resultVideo"
+                  hidden
+                  playsinline
+                  preload="metadata"
+                  controls
+                ></video>
+                <div id="videoEmpty" class="empty">
+                  <strong>从一个动作开始</strong>
+                  <p>导入参考视频，开始复刻人物动作</p>
+                  <span class="muted">支持播放、区间裁切与深度预览</span>
+                </div>
+                <video
+                  id="depthVideo"
+                  hidden
+                  playsinline
+                  preload="metadata"
+                ></video
+                ><span id="videoLabel" class="videolabel" hidden>参考视频</span>
+              </div>
+              <div class="transport">
+                <button id="play" disabled>播放</button
+                ><span id="playtime">00:00.0 / 00:00.0</span
+                ><button id="loop" aria-pressed="true" class="selected">
+                  区间循环
+                </button>
+              </div>
+              <input
+                id="seek"
+                aria-label="播放进度"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0"
+                disabled
+              />
+              <div class="timelinewrap">
+                <div class="timeline" id="timeline">
+                  <div class="trackticks"></div>
+                  <div id="selectedRange"></div>
+                  <button
+                    id="inHandle"
+                    class="handle"
+                    role="slider"
+                    aria-label="裁切入点 I"
+                    aria-valuemin="0"
+                    aria-valuemax="0"
+                    aria-valuenow="0"
+                    disabled
+                  >
+                    I</button
+                  ><button
+                    id="outHandle"
+                    class="handle"
+                    role="slider"
+                    aria-label="裁切出点 O"
+                    aria-valuemin="0"
+                    aria-valuemax="0"
+                    aria-valuenow="0"
+                    disabled
+                  >
+                    O
+                  </button>
+                </div>
+                <div class="ticklabels">
+                  <span>00:00</span><span id="midtick">00:00</span
+                  ><span id="endtick">00:00</span>
+                </div>
+              </div>
+              <div class="timefields">
+                <label
+                  >I 入点
+                  <input
+                    id="inTime"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value="0"
+                    disabled /></label
+                ><label
+                  >O 出点
+                  <input
+                    id="outTime"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value="0"
+                    disabled /></label
+                ><span id="durationBadge" class="badge">选取区间</span>
+              </div>
+              <div class="processing" aria-live="polite">
+                <div class="processhead">
+                  <strong id="progressTitle">等待参考视频</strong
+                  ><strong id="percent">0%</strong>
+                </div>
+                <div id="generationEta" class="generation-eta" hidden>
+                  <strong data-eta-remaining></strong>
+                  <span data-eta-clock></span>
+                  <small data-eta-evidence hidden></small>
+                </div>
+                <progress id="progress" max="100" value="0"></progress>
+                <div class="generation-eta-meta"><span data-eta-stage></span><span data-eta-elapsed></span></div>
+                <p id="progressDetail">先选择视频，再决定单人或多人复刻。</p>
+                <button id="copyFailure" type="button">复制原因</button>
+                <div class="pipeline" data-pipeline-kind="clone" aria-label="处理阶段">
+                  <span data-pipeline-step="-1">准备提示词</span><span id="pipeDepth" data-pipeline-step="0">深度提取</span
+                  ><span id="pipeVlm" data-pipeline-step="1">人物解析</span
+                  ><span id="pipeH3" data-pipeline-step="2">视频生成</span
+                  ><span id="pipeSr" data-pipeline-step="3">画质提升</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <aside id="queuePanel" class="panel queuepanel" aria-label="生成任务">
+          <div class="panelhead">
+            <strong>生成任务 <span id="queueCount" class="counter">0</span></strong>
+            <button id="queueToggle" type="button" aria-expanded="true" aria-controls="queueBody" title="收起生成任务">›</button>
+            <div class="queue-actions">
+              <button id="pauseQueue" class="quiet">暂停队列</button>
+              <button id="cleanupQueue" class="quiet cleanup-queue" type="button">清理异常</button>
+            </div>
+          </div>
+          <div id="queueBody">
+            <p class="queuehint">每次点击创建独立任务，按顺序生成。</p>
+            <div id="queue">
+              <div class="queueempty">
+                <strong>你的下一支作品<br />从这里诞生</strong>
+                <p>可连续添加多个复刻任务<br />任务会保存当时的素材与参数</p>
+              </div>
+            </div>
+            <div class="queuefooter">
+              <span class="statusdot"></span>本地任务队列<span
+                >服务端持久保存</span
+              >
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <nav class="clone-mobile-dock" aria-label="克隆中心移动端功能区">
+      <a href="/" class="clone-mobile-dock-item" aria-label="返回生成页">
+        <span class="clone-mobile-icon clone-mobile-home" aria-hidden="true"></span>
+        <span>生成</span>
+      </a>
+      <button class="clone-mobile-dock-item active" type="button" data-clone-mobile-target="flow" aria-pressed="true">
+        <span class="clone-mobile-icon clone-mobile-flow" aria-hidden="true"></span>
+        <span>素材</span>
+      </button>
+      <button class="clone-mobile-dock-item" type="button" data-clone-mobile-target="workspace" aria-pressed="false">
+        <span class="clone-mobile-icon clone-mobile-workspace" aria-hidden="true"></span>
+        <span>预览</span>
+      </button>
+      <button class="clone-mobile-dock-item" type="button" data-clone-mobile-target="queue" aria-pressed="false">
+        <span class="clone-mobile-icon clone-mobile-queue" aria-hidden="true"></span>
+        <span>任务 <span id="mobileQueueCount" class="mobile-queue-count">0</span></span>
+      </button>
+    </nav>
+
+    <input hidden id="videoFile" type="file" accept="video/*" /><input
+      hidden
+      id="imageFiles"
+      type="file"
+      accept="image/*"
+      multiple
+    />
+    <dialog id="modeDialog">
+      <form method="dialog">
+        <div class="dialoghead"><h2>参考视频里有几个人？</h2></div>
+        <p>决定人物资产如何与动作对应。稍后可以切换。</p>
+        <div class="modechoices">
+          <button type="button" id="single">
+            <strong>单人复刻</strong
+            ><span>一个人物资产槽位<br />同人多视图放在这里</span></button
+          ><button type="button" id="multi">
+            <strong>多人复刻</strong
+            ><span>解析人数与空间位置<br />为每个人绑定参考图</span>
+          </button>
+        </div>
+        <button class="wide quiet">稍后选择</button>
+      </form>
+    </dialog>
+    <dialog id="settingsDialog">
+      <form method="dialog">
+        <div class="dialoghead">
+          <h2>克隆中心设置</h2>
+          <button class="quiet">关闭</button>
+        </div>
+        <label class="field"
+          >深度视频 · 默认模式<select id="defaultMode">
+            <option value="portrait">人像模式</option>
+            <option value="professional">专业模式</option>
+          </select></label
+        >
+        <p>
+          两种模式默认均保留完整深度。人像模式在复刻时优先人物动作；专业模式同时参考场景结构。
+          黑底人物遮罩为单次提取的可选实验处理，默认关闭。
+        </p>
+        <label class="field">深度模型<select id="depthModelSetting">
+          <option value="small">Small · 轻量（约 116 MB）</option>
+          <option value="base">Base · 高质量（约 458 MB）</option>
+        </select></label>
+        <p id="depthModelStatus">首次提取时从魔搭自动补齐所选模型和缺失运行时，下载进度显示在任务中。</p>
+        <p>Small：Apache-2.0。Base：CC-BY-NC-4.0，仅限非商业用途；显存和处理时间高于 Small。</p>
+        <label class="field"
+          >Qwen 解析方案<select>
+            <option>Qwen3-VL-4B · Q4_K_M</option>
+          </select></label
+        >
+        <p>
+          原视频变化帧 + 均匀采样补帧 → 逐帧解析 →
+          人数汇总与位置映射。深度帧作为辅助参考。
+        </p>
+        <label class="field"
+          >生成后超分<select id="srSetting">
+            <option value="2">Real-ESRGAN · 2× 分块处理</option>
+            <option value="0">关闭</option>
+          </select></label
+        >
+        <p>
+          深度、Qwen、H3、超分依次运行并释放模型。超分逐帧采用128px分块；实际峰值取决于输入尺寸。
+        </p>
+        <button type="button" id="saveSettings" class="primary wide">
+          保存设置
+        </button>
+      </form>
+    </dialog>
+    <dialog id="taskDialog">
+      <div class="dialoghead">
+        <h2>任务参数快照</h2>
+        <button id="closeTask">关闭</button>
+      </div>
+      <pre id="taskSnapshot"></pre>
+    </dialog>
+    <dialog id="depthAdjustDialog" class="depth-adjust-dialog" aria-label="深度视频调参">
+      <div class="dialoghead"><h2>深度视频调参</h2><button id="depthAdjustClose" class="quiet" type="button">关闭</button></div>
+      <p>基于已提取的原始深度重新编码。应用后，后续生成使用新深度视频。</p>
+      <video id="depthAdjustPreview" controls muted playsinline preload="metadata"></video>
+      <small>滑块提供近似预览；点击“应用参数”后由本机精确重算深度视频。</small>
+      <div class="depth-adjust-controls">
+        <label>远景黑点 <output></output><input data-depth-control="far_point" type="range" min="0" max="99" value="0" /></label>
+        <label>近景白点 <output></output><input data-depth-control="near_point" type="range" min="1" max="100" value="100" /></label>
+        <label>中间调 <output></output><input data-depth-control="midtone" type="range" min="-100" max="100" value="0" /></label>
+        <label>对比度 <output></output><input data-depth-control="contrast" type="range" min="0" max="300" value="100" /></label>
+        <label>亮度 <output></output><input data-depth-control="brightness" type="range" min="-100" max="100" value="0" /></label>
+        <label>平滑 <output></output><input data-depth-control="smooth" type="range" min="0" max="50" value="0" /></label>
+        <label class="depth-invert"><input id="depthInvert" type="checkbox" />黑白反相</label>
+      </div>
+      <div class="depth-adjust-actions"><button id="depthAdjustReset" type="button">恢复默认</button><button id="depthAdjustApply" class="primary" type="button">应用参数</button></div>
+    </dialog>
+    <dialog id="videoCompareDialog" class="video-compare-dialog" aria-label="原视频与生成视频对比">
+      <div class="video-compare-head">
+        <div><strong>视频对比</strong><small id="videoCompareTitle"></small></div>
+        <div class="video-compare-modes" role="group" aria-label="对比模式">
+          <button type="button" data-compare-mode="split" class="active">双屏联动</button>
+          <button type="button" data-compare-mode="wipe">划像对比</button>
+        </div>
+        <div id="videoCompareVariants" class="video-compare-modes video-compare-variants" role="group" aria-label="对比视频版本" hidden>
+          <button id="videoCompareOriginal" type="button" aria-pressed="false">未超分</button>
+          <button id="videoCompareUpscaled" type="button" aria-pressed="true">超分</button>
+        </div>
+        <button id="closeVideoCompare" type="button" class="quiet" aria-label="关闭视频对比">关闭</button>
+      </div>
+      <div id="videoCompareStage" class="video-compare-stage">
+        <div class="video-compare-pane source"><video id="videoCompareSource" preload="metadata" playsinline></video><span>原视频</span></div>
+        <div class="video-compare-pane result"><video id="videoCompareResult" preload="metadata" playsinline></video><span id="videoCompareResultLabel">生成视频</span></div>
+        <div id="videoCompareDivider" class="video-compare-divider" hidden aria-hidden="true"><span>‹ ›</span></div>
+        <input id="videoCompareWipe" class="video-compare-wipe" type="range" min="0" max="100" value="50" aria-label="划像分割位置" hidden />
+        <button id="exportVideoCompare" class="video-compare-export" type="button">导出对比视频</button>
+      </div>
+      <div class="video-compare-controls">
+        <button id="videoComparePlay" type="button" aria-label="播放">播放</button>
+        <input id="videoCompareSeek" type="range" min="0" max="1000" value="0" aria-label="播放进度" />
+        <span id="videoCompareTime">0:00 / 0:00</span>
+      </div>
+    </dialog>
+    <dialog id="lightweightPromptDialog" class="cloud-plan-dialog">
+      <div class="dialoghead"><h2>最终提示词</h2><button id="lightweightPromptClose" class="quiet" type="button">关闭</button></div>
+      <textarea id="lightweightPromptText" rows="12" readonly aria-label="最终提示词预览"></textarea>
+    </dialog>
+    <dialog id="cloudSceneDialog" class="cloud-plan-dialog">
+      <div class="dialoghead"><h2>背景场景配置</h2><button id="cloudSceneClose" class="quiet" type="button">完成</button></div>
+                <section id="cloudDepthOptions" class="cloud-depth-options" hidden>
+                  <div class="assethead"><strong>专业模式 · 场景参考</strong><span class="muted">深度视频 + 背景图片</span></div>
+                  <p class="muted">云端只提交深度视频作为动作参考；你上传的背景图片提供场景颜色、材质和光线。不会自动上传原视频。</p>
+                  <input id="backgroundImageFile" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" hidden />
+                  <button id="backgroundImageUpload" class="wide" type="button">上传背景场景图片</button>
+                  <small>可将图片拖入此场景参考区域</small>
+                  <div id="backgroundImageDetails" hidden>
+                    <div class="cloud-background-title"><strong id="backgroundImageName"></strong><button id="backgroundImageRemove" class="quiet" type="button">移除</button></div>
+                    <img id="backgroundImagePreview" alt="背景场景图预览" />
+                    <p class="muted">背景图片作为最后一张场景图提交；此模式最多使用8张人物图。</p>
+                  </div>
+                  <label for="sceneText">场景与素材说明（必填）</label>
+                  <textarea id="sceneText" rows="4" maxlength="1200" placeholder="例如：场景图A是雨夜街道。人物图1是女主角；保留她的脸和衣服，用场景图里的霓虹灯与湿地面。"></textarea>
+                  <small>提交时由本机 Qwen 结合生成需求规划引用；规划失败不会调用优云。</small>
+                </section>
+    </dialog>
+
+    <div id="taskMenuLayer" class="task-menu-layer" hidden></div>
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="app.js?v=20261018-node-clone"></script>
+  </body>
+</html>

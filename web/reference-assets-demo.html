@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>参考素材布局 Demo</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #111316;
+        --panel: #1b1f24;
+        --panel-2: #20262d;
+        --line: #343c45;
+        --text: #f1f5f9;
+        --muted: #a7b0ba;
+        --accent: #5ee0b5;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--text); }
+      button, input, select, textarea { font: inherit; }
+      button, input, select, textarea {
+        border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); color: var(--text);
+      }
+      button { cursor: pointer; }
+      .page { width: min(1180px, calc(100% - 32px)); margin: 24px auto; }
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+      h1, h2, p { margin: 0; }
+      h1 { font-size: 24px; }
+      .status { color: var(--accent); font-size: 13px; }
+      .workspace { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); overflow: visible; }
+      .parameters { padding: 14px 16px 16px; border-bottom: 1px solid var(--line); background: #171b20; }
+      .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .section-head h2 { font-size: 14px; }
+      .section-head span { color: var(--muted); font-size: 12px; }
+      .parameter-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+      label { min-width: 0; }
+      label span { display: block; margin-bottom: 5px; color: var(--muted); font-size: 12px; }
+      label input, label select { width: 100%; min-width: 0; padding: 9px 10px; }
+      .assets { padding: 14px 16px 16px; border-bottom: 1px solid var(--line); }
+      .asset-row + .asset-row { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(52, 60, 69, 0.7); }
+      .asset-row-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 9px; }
+      .asset-row-title { display: flex; align-items: baseline; gap: 8px; }
+      .asset-row-title strong { font-size: 13px; }
+      .asset-row-title span { color: var(--muted); font-size: 11px; }
+      .asset-actions { display: flex; gap: 7px; }
+      .asset-actions button { width: auto; padding: 7px 11px; font-size: 12px; }
+      .asset-strip { display: flex; gap: 9px; min-height: 78px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; }
+      .asset-card { position: relative; flex: 0 0 112px; width: 112px; height: 68px; border: 1px solid var(--line); border-radius: 6px; background: #090b0d; overflow: hidden; }
+      .asset-card:hover { border-color: var(--accent); }
+      .asset-card img, .asset-card video { width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none; }
+      .asset-card .sample-art { width: 100%; height: 100%; background: linear-gradient(145deg, #297c74 0 32%, #d8b267 32% 53%, #694b81 53% 72%, #182e3c 72%); }
+      .asset-card:nth-child(2) .sample-art { background: linear-gradient(25deg, #e0a454 0 26%, #405e8e 26% 57%, #9d5268 57% 76%, #223127 76%); }
+      .asset-card:nth-child(3) .sample-art { background: linear-gradient(160deg, #5a7f49 0 35%, #d7d0b4 35% 58%, #b46246 58% 77%, #273549 77%); }
+      .order { position: absolute; left: 5px; top: 5px; z-index: 2; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(9, 11, 13, 0.88); border: 1px solid rgba(255,255,255,.32); font-size: 11px; font-weight: 700; }
+      .kind { position: absolute; right: 5px; bottom: 5px; padding: 3px 5px; border-radius: 4px; background: rgba(9,11,13,.82); color: #d8e0e7; font-size: 10px; }
+      .remove { position: absolute; right: 4px; top: 4px; z-index: 3; display: none; width: 24px; height: 24px; padding: 0; border-radius: 50%; background: rgba(9,11,13,.9); color: #ffb4b4; }
+      .asset-card:hover .remove { display: block; }
+      .drop-active { outline: 2px solid var(--accent); outline-offset: -2px; background: rgba(94,224,181,.08); }
+      .editor { display: grid; grid-template-columns: 1fr 280px; gap: 16px; padding: 16px; }
+      textarea { width: 100%; min-height: 210px; padding: 12px; resize: vertical; line-height: 1.5; }
+      .summary { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: #171b20; }
+      .summary h2 { font-size: 14px; }
+      .summary p { margin-top: 10px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+      .primary { width: 100%; margin-top: 14px; padding: 11px; border-color: transparent; background: var(--accent); color: #06251c; font-weight: 700; }
+      .file-input { display: none; }
+      .hover-preview { position: fixed; z-index: 100; width: min(440px, calc(100vw - 24px)); aspect-ratio: 16 / 10; padding: 7px; border: 1px solid #56616d; border-radius: 8px; background: #080a0c; box-shadow: 0 18px 48px rgba(0,0,0,.58); opacity: 0; transform: translateY(4px); pointer-events: none; transition: opacity 120ms ease, transform 120ms ease; }
+      .hover-preview.visible { opacity: 1; transform: translateY(0); }
+      .hover-preview img, .hover-preview video, .hover-preview .sample-art { width: 100%; height: 100%; display: block; object-fit: contain; border-radius: 4px; background: #000; }
+      .hover-preview .sample-art { object-fit: initial; }
+      .hover-caption { position: absolute; left: 14px; bottom: 14px; padding: 5px 7px; border-radius: 5px; background: rgba(9,11,13,.82); font-size: 11px; }
+      @media (max-width: 760px) {
+        .page { width: min(100% - 20px, 560px); margin: 10px auto 24px; }
+        .parameter-grid { grid-template-columns: 1fr 1fr; }
+        .assets, .parameters { padding: 12px; }
+        .asset-card { flex-basis: 96px; width: 96px; height: 62px; }
+        .editor { grid-template-columns: 1fr; padding: 12px; }
+        .hover-preview { width: min(330px, calc(100vw - 20px)); aspect-ratio: 4 / 3; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <h1>MiniMax H3</h1>
+        <span class="status">布局交互 Demo</span>
+      </header>
+      <section class="workspace">
+        <div class="parameters">
+          <div class="section-head"><h2>生成参数</h2><span>常驻展开</span></div>
+          <div class="parameter-grid">
+            <label><span>分辨率</span><select><option>0.3MP 16:9 - 736x416</option></select></label>
+            <label><span>时长（秒）</span><input type="number" value="6" /></label>
+            <label><span>Steps</span><input type="number" value="12" /></label>
+            <label><span>Seed</span><input placeholder="留空随机" /></label>
+          </div>
+        </div>
+
+        <div class="assets" id="assetsArea">
+          <div class="asset-row">
+            <div class="asset-row-head">
+              <div class="asset-row-title"><strong>参考图片</strong><span id="imageCount">3 / 9</span></div>
+              <div class="asset-actions"><button id="addImages" type="button">添加图片</button></div>
+            </div>
+            <div class="asset-strip" id="imageStrip" data-kind="image">
+              <div class="asset-card" data-preview="sample"><span class="order">1</span><div class="sample-art"></div><span class="kind">图片</span><button class="remove" type="button" aria-label="移除">×</button></div>
+              <div class="asset-card" data-preview="sample"><span class="order">2</span><div class="sample-art"></div><span class="kind">图片</span><button class="remove" type="button" aria-label="移除">×</button></div>
+              <div class="asset-card" data-preview="sample"><span class="order">3</span><div class="sample-art"></div><span class="kind">图片</span><button class="remove" type="button" aria-label="移除">×</button></div>
+            </div>
+          </div>
+
+          <div class="asset-row">
+            <div class="asset-row-head">
+              <div class="asset-row-title"><strong>参考视频</strong><span id="videoCount">2 / 3</span></div>
+              <div class="asset-actions"><button id="addVideos" type="button">添加视频</button></div>
+            </div>
+            <div class="asset-strip" id="videoStrip" data-kind="video">
+              <div class="asset-card" data-preview="video"><span class="order">1</span><video src="/outputs/c3e78ec4-c874-4949-958f-3ad67cff32c7.mp4" muted preload="metadata"></video><span class="kind">视频</span><button class="remove" type="button" aria-label="移除">×</button></div>
+              <div class="asset-card" data-preview="video"><span class="order">2</span><video src="/outputs/db37ef43-a14f-4813-a36d-f7fca1d38c40.mp4" muted preload="metadata"></video><span class="kind">视频</span><button class="remove" type="button" aria-label="移除">×</button></div>
+            </div>
+          </div>
+          <input id="imageInput" class="file-input" type="file" accept="image/png,image/jpeg,image/webp" multiple />
+          <input id="videoInput" class="file-input" type="file" accept="video/mp4,video/quicktime" multiple />
+        </div>
+
+        <div class="editor">
+          <label><span>提示词</span><textarea placeholder="描述画面、镜头、动作和音效。"></textarea></label>
+          <aside class="summary"><h2>交互说明</h2><p>将鼠标停在任一缩略图上 0.5 秒，会显示大尺寸悬浮预览。视频会自动静音循环播放，移开后立即停止。</p><p>可点击按钮多选文件，也可将多个文件拖入对应缩略图区域。</p><button class="primary" type="button">开始生成</button></aside>
+        </div>
+      </section>
+    </main>
+    <div id="hoverPreview" class="hover-preview" role="tooltip"></div>
+    <script>
+      const imageStrip = document.querySelector("#imageStrip");
+      const videoStrip = document.querySelector("#videoStrip");
+      const imageInput = document.querySelector("#imageInput");
+      const videoInput = document.querySelector("#videoInput");
+      const hoverPreview = document.querySelector("#hoverPreview");
+      let hoverTimer = null;
+
+      document.querySelector("#addImages").addEventListener("click", () => imageInput.click());
+      document.querySelector("#addVideos").addEventListener("click", () => videoInput.click());
+      imageInput.addEventListener("change", () => { addFiles(imageStrip, imageInput.files, 9); imageInput.value = ""; });
+      videoInput.addEventListener("change", () => { addFiles(videoStrip, videoInput.files, 3); videoInput.value = ""; });
+
+      function addFiles(strip, files, limit) {
+        const kind = strip.dataset.kind;
+        Array.from(files).slice(0, Math.max(0, limit - strip.children.length)).forEach((file) => {
+          const url = URL.createObjectURL(file);
+          const card = document.createElement("div");
+          card.className = "asset-card";
+          card.dataset.preview = kind;
+          card.dataset.objectUrl = url;
+          const media = document.createElement(kind === "video" ? "video" : "img");
+          media.src = url;
+          if (kind === "video") { media.muted = true; media.preload = "metadata"; }
+          card.innerHTML = `<span class="order"></span>`;
+          card.append(media);
+          card.insertAdjacentHTML("beforeend", `<span class="kind">${kind === "video" ? "视频" : "图片"}</span><button class="remove" type="button" aria-label="移除">×</button>`);
+          strip.append(card);
+        });
+        updateOrders();
+      }
+
+      [imageStrip, videoStrip].forEach((strip) => {
+        ["dragenter", "dragover"].forEach((name) => strip.addEventListener(name, (event) => { event.preventDefault(); strip.classList.add("drop-active"); }));
+        strip.addEventListener("dragleave", (event) => { if (!strip.contains(event.relatedTarget)) strip.classList.remove("drop-active"); });
+        strip.addEventListener("drop", (event) => { event.preventDefault(); strip.classList.remove("drop-active"); addFiles(strip, event.dataTransfer.files, strip === imageStrip ? 9 : 3); });
+      });
+
+      document.addEventListener("click", (event) => {
+        const remove = event.target.closest(".remove");
+        if (!remove) return;
+        const card = remove.closest(".asset-card");
+        if (card.dataset.objectUrl) URL.revokeObjectURL(card.dataset.objectUrl);
+        hidePreview();
+        card.remove();
+        updateOrders();
+      });
+
+      document.addEventListener("pointerover", (event) => {
+        const card = event.target.closest(".asset-card");
+        if (!card || card.contains(event.relatedTarget)) return;
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(() => showPreview(card), 500);
+      });
+      document.addEventListener("pointerout", (event) => {
+        const card = event.target.closest(".asset-card");
+        if (!card || card.contains(event.relatedTarget)) return;
+        hidePreview();
+      });
+
+      function showPreview(card) {
+        hoverPreview.replaceChildren();
+        const source = card.querySelector("img, video, .sample-art");
+        const clone = source.cloneNode(true);
+        if (clone.tagName === "VIDEO") { clone.muted = true; clone.loop = true; clone.autoplay = true; clone.controls = false; }
+        hoverPreview.append(clone);
+        const caption = document.createElement("span");
+        caption.className = "hover-caption";
+        caption.textContent = `${card.closest("[data-kind]").dataset.kind === "video" ? "视频" : "图片"} ${card.querySelector(".order").textContent}`;
+        hoverPreview.append(caption);
+        hoverPreview.style.visibility = "hidden";
+        hoverPreview.classList.add("visible");
+        const cardRect = card.getBoundingClientRect();
+        const previewRect = hoverPreview.getBoundingClientRect();
+        const gap = 10;
+        let left = cardRect.right + gap;
+        if (left + previewRect.width > innerWidth - 10) left = cardRect.left - previewRect.width - gap;
+        left = Math.max(10, Math.min(left, innerWidth - previewRect.width - 10));
+        let top = cardRect.top + cardRect.height / 2 - previewRect.height / 2;
+        top = Math.max(10, Math.min(top, innerHeight - previewRect.height - 10));
+        hoverPreview.style.left = `${left}px`;
+        hoverPreview.style.top = `${top}px`;
+        hoverPreview.style.visibility = "visible";
+        clone.play?.().catch(() => {});
+      }
+
+      function hidePreview() {
+        clearTimeout(hoverTimer);
+        hoverPreview.querySelector("video")?.pause();
+        hoverPreview.classList.remove("visible");
+        hoverPreview.style.visibility = "hidden";
+      }
+
+      function updateOrders() {
+        [imageStrip, videoStrip].forEach((strip) => [...strip.children].forEach((card, index) => card.querySelector(".order").textContent = index + 1));
+        document.querySelector("#imageCount").textContent = `${imageStrip.children.length} / 9`;
+        document.querySelector("#videoCount").textContent = `${videoStrip.children.length} / 3`;
+      }
+    </script>
+  </body>
+</html>
