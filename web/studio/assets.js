@@ -1,4 +1,5 @@
 import { assetManifest, referenceEntries, remapReferences, ReferenceMenu } from "./references.js";
+import {bindFileDrop} from './media-upload.js';
 
 export function appendAssetFiles(body, mode, references, frames) {
   const append = (field, file) => body.append(field, file, file.name.replace(/\.jfif$/i, ".jpg"));
@@ -33,15 +34,12 @@ export class AssetPicker {
       this.addFiles(this.input.files, this.pickTarget);
       this.input.value = '';
     });
-    this.grid.addEventListener('dragover', event => {
-      if (event.dataTransfer.types.includes('Files')) event.preventDefault();
+    bindFileDrop(this.grid, (files, event) => {
+      const role = event.target.closest('[data-frame-role]')?.dataset.frameRole;
+      const replaceId = this.mode === 'references' ? event.target.closest('[data-asset-id]')?.dataset.assetId : undefined;
+      this.addFiles(files, {mode:this.mode,role,replaceId});
     });
-    this.grid.addEventListener('drop', event => {
-      if (!event.dataTransfer.files.length) return;
-      event.preventDefault();
-      const role = event.target.closest('[data-frame-role]')?.dataset.frameRole || 'first_frame';
-      this.addFiles(event.dataTransfer.files, {mode: this.mode, role});
-    });
+    bindFileDrop(root.querySelector('.preview-wrap'), files => this.addFiles(files));
     root.querySelectorAll("[data-work-mode]").forEach(button => button.addEventListener("click", () => this.setMode(button.dataset.workMode)));
     this.setMode("references");
     window.addEventListener("beforeunload", () => {
@@ -49,6 +47,12 @@ export class AssetPicker {
     });
   }
   addFiles(files, {mode = this.mode, role, replaceId} = {}) {
+      if (mode === 'keyframes' && !role) {
+        const targets = ['first_frame','last_frame'].filter(key=>!this.frames[key]);
+        if (!targets.length) targets.push('first_frame','last_frame');
+        Array.from(files).slice(0,targets.length).forEach((file,index)=>this.addFiles([file],{mode,role:targets[index]}));
+        return;
+      }
       let rejected = 0;
       for (const file of files) {
         const video = file.type.startsWith("video/") || /\.(mp4|mov)$/i.test(file.name);
@@ -246,18 +250,10 @@ export class AssetPicker {
   async preview(item) {
     if (item.audio) throw new Error("audio preview not required");
     if (!item.video) {
-      try {
-        const body = new FormData();
-        body.append("image", item.file);
-        const response = await fetch(`${this.api}/api/reference-thumbnail`, {method:"POST", body, signal:AbortSignal.timeout(8000)});
-        if (!response.ok) throw new Error("thumbnail");
-        return await response.blob();
-      } catch {
-        // 离线也可预览，原始文件始终保留用于上传。
-        const bitmap = await createImageBitmap(item.file);
-        try { return await scaledBlob(bitmap, bitmap.width, bitmap.height); }
-        finally { bitmap.close(); }
-      }
+      // 缩略图在浏览器内生成，原文件仅在提交时上传一次并显示真实进度。
+      const bitmap = await createImageBitmap(item.file);
+      try { return await scaledBlob(bitmap, bitmap.width, bitmap.height); }
+      finally { bitmap.close(); }
     }
     const url = URL.createObjectURL(item.file);
     const video = document.createElement("video");

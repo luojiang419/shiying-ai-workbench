@@ -77,6 +77,7 @@
       }
       if (job.cloud && !job.sampling_timing && !['h3','alignment','upscale'].includes(job.phase)) stage = null;
       if (job.phase === 'prompt') stage = -1;
+      if (job.phase === 'uploading' || job.pendingSubmission && job.phase === 'submitting') stage = null;
     }
     for (const item of element.querySelectorAll('[data-pipeline-step]')) {
       const index = Number(item.dataset.pipelineStep);

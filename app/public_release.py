@@ -53,8 +53,10 @@ def owner_code(root: Path = ROOT, instance: str | None = None) -> str:
 
 def description(root: Path = ROOT) -> dict:
     from .prompt_optimizer import load_assistant_providers
+    providers=load_assistant_providers(root/'config/assistant-providers.json')
     return {'enabled':enabled(root), 'brand':BRAND, 'edition':'video-clone', 'imageStudio':False,
-            'setupUrl':'/setup/', 'assistantConfigured':bool(load_assistant_providers(root/'config/assistant-providers.json'))}
+            'setupUrl':'/setup/', 'assistantConfigured':bool(providers),
+            'assistantModel':providers[0]['defaultModel'] if providers else None}
 
 
 def configure_flash(root: Path, key: str, verify=None) -> None:
@@ -63,8 +65,18 @@ def configure_flash(root: Path, key: str, verify=None) -> None:
     if not isinstance(key, str) or not 10 <= len(key.strip()) <= 512 or any(c.isspace() for c in key.strip()):
         raise ValueError('请输入有效的 DeepSeek API Key')
     key = key.strip()
+    path=root/'config/assistant-providers.json'
+    try:
+        existing=json.loads(path.read_text(encoding='utf-8')) if path.exists() else []
+    except (OSError,ValueError):
+        raise ValueError('当前助手配置无法读取，请先在实例设置中修复') from None
+    if not isinstance(existing,list) or any(not isinstance(item,dict) for item in existing):
+        raise ValueError('当前助手配置格式异常，请先在实例设置中修复')
+    others=[item for item in existing if item.get('id')!='deepseek-flash']
+    if len(others)>=20:raise ValueError('助手数量已达上限，请先在实例设置中移除一个助手')
     provider = {'id':'deepseek-flash', 'name':'DeepSeek Flash', 'baseUrl':BASE_URL,
-                'apiType':'OpenAI Responses API', 'defaultModel':MODEL, 'enabled':True}
+                'apiType':'OpenAI Responses API', 'defaultModel':MODEL, 'models':[MODEL],
+                'autoModels':False, 'enabled':True}
     try:
         if verify:
             verify(provider, key)
@@ -76,7 +88,7 @@ def configure_flash(root: Path, key: str, verify=None) -> None:
     except (OSError, RuntimeError, ValueError):
         raise ValueError('Flash 验证失败，请检查 Key、余额或稍后重试') from None
     provider['encryptedKey'] = seal_node_key(key, root)
-    write_private(root/'config/assistant-providers.json', [provider])
+    write_private(path, [provider,*others])
 
 
 def install_routes(app, *, root: Path = ROOT, verify=None) -> None:

@@ -199,7 +199,7 @@ try {
       const element=query(selector);element.hidden=true;element.setAttribute('aria-hidden','true');
     }
   }
-  await import('/assets/studio/demo-runtime.js?v=20261018-web-settings');
+  await import('/assets/studio/demo-runtime.js?v=20261018-media-upload');
   browserControls();
   if (boot.openSettings) openPage('settings');
   const observer=new MutationObserver(() => {

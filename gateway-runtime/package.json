@@ -1,0 +1,7 @@
+{
+  "name": "shiying-gateway-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runtime dependencies for the Shiying AI AutoDL gateway",
+  "dependencies": {"http-proxy-middleware": "3.0.5"}
+}

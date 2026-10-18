@@ -1,10 +1,13 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const {createRequire} = require('node:module');
-const requirePanel = createRequire('/root/zealman-app/package.json');
+const proxyRuntime = fs.existsSync('/root/minimax-node/gateway-runtime/package.json')
+  ? '/root/minimax-node/gateway-runtime/package.json' : '/root/zealman-app/package.json';
+const requirePanel = createRequire(proxyRuntime);
 const {createProxyMiddleware} = requirePanel('http-proxy-middleware');
 const {readPlatformUrls, publicHost} = require('./platform-origin.cjs');
 const configPath = '/root/minimax-node/config/gateway.json';
+const maintenancePath = '/root/minimax-node/config/public-maintenance.json';
 let platformUrls = readPlatformUrls();
 setInterval(() => { platformUrls = readPlatformUrls(); }, 60000).unref();
 // 保留本次请求的公网 Host，让后端可将其与浏览器 Origin 正确核对。
@@ -26,6 +29,11 @@ function allowed(req){
 }
 const server=http.createServer((req,res)=>{
   if(!allowed(req)){res.writeHead(403,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end('{"error":"network_not_allowed"}');return;}
+  if(req.method==='POST' && fs.existsSync(maintenancePath) &&
+      /^\/(?:api\/(?:generate(?:-upload)?|clone\/tasks\/(?:generate|generate-prepared)|image-studio\/jobs)|v1\/images\/(?:generations|edits))(?:[/?]|$)/.test(req.url)){
+    res.writeHead(503,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Retry-After':'60'});
+    res.end(JSON.stringify({detail:'正在准备公开镜像，当前任务继续运行，暂不接收新的生成任务'}));return;
+  }
   proxy(req,res);
 });
 server.on('upgrade',(req,socket,head)=>{if(!allowed(req)){socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');return;}proxy.upgrade(req,socket,head);});

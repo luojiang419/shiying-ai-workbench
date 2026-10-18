@@ -7,6 +7,7 @@ import { readNativeMaterial, isNativeMaterial } from './clone-center/native-mate
 import { materialTemplate, materialReplacement } from './clone-center/material-template.js';
 import { bindResolutionSelectors } from "./resolution-selectors.js";
 import { SubmissionQueue } from './submission-queue.js';
+import {uploadJson,uploadText} from './media-upload.js';
 import { ASSISTANT_PRESETS, normalizedAssistantUrl } from "./assistant-providers.js";
 import { AssetPicker, appendAssetFiles } from "./assets.js";
 import './generation-eta.js';
@@ -31,7 +32,7 @@ window.__TAURI__.event?.listen('service-operation-error', event => {
   qs('.hero-status p').textContent = runtime.serviceCommandError;
   notifyError(event.payload);
 }).catch(error => console.error(error));
-let LOCAL_API = "http://127.0.0.1:7860";
+let LOCAL_API = window.MinimaxBrowser ? location.origin : "http://127.0.0.1:7860";
 let nodeEnabled = !window.MinimaxBrowser && localStorage.getItem(NODE_MODE_KEY) === 'true' && Boolean(savedNodeAddress());
 let API = nodeEnabled ? savedNodeAddress() : LOCAL_API;
 const isNode = () => nodeEnabled && runtime.settings?.generation_engine === 'local';
@@ -735,6 +736,7 @@ function setPreview(title, message, progress = 0, options = {}) {
   qs(".preview-copy-error").textContent = "复制原因";
   preview.classList.remove("is-welcome");
   qs(".preview-copy").classList.toggle("is-loading", loading);
+  qs(".preview-copy").classList.toggle("is-uploading", Boolean(loading && options.job?.pendingSubmission && options.job?.upload));
   preview.style.width = "";
   preview.style.aspectRatio = "";
   runtime.previewJobId = options.jobId || "";
@@ -1140,7 +1142,7 @@ async function executeSubmission(draft, context) {
     appendAssetFiles(body, draft.mode, draft.references, draft.frames);
     if(draft.remoteNode)await remoteArchive.watch(draft.apiBase);
     await context.submitting();
-    job = await submissionApi(draft.apiBase, '/api/generate-upload', {method:'POST', body});
+    job = await uploadJson(draft.apiBase + '/api/generate-upload', {body,onProgress:context.progress});
     if(draft.remoteNode) {await remoteArchive.watch(draft.apiBase);job=await remoteArchive.remember(draft.apiBase,'video',job);}
   }
   return job;
@@ -1155,6 +1157,9 @@ const submissionQueue = new SubmissionQueue('desktop', executeSubmission, () => 
   }
   qs('.clone-center-frame')?.contentWindow?.postMessage({type:'clone-submission-complete', pendingId:pending.id, taskId:job.id}, '*');
 });
+submissionQueue.progressed = job => {
+  if (job && runtime.previewJobId === job.id) showTaskInPreview(job);
+};
 submissionQueue.canRun=draft=>draft.engine==='platform_h3'
   ? Boolean(draft.ownerId && draft.ownerId===platformApi.userId())
   : draft.engine==='compshare_h3' ? Boolean(draft.personalScope && draft.personalScope===sessionStorage.getItem('minimax-personal-cloud-scope') && (draft.ownerId||'')===(platformApi.userId()||'')) : true;
@@ -1325,7 +1330,7 @@ function renderTaskItems(items) {
   }
   runtime.activeJobIds = new Set(items.filter((job) => job.cloud ? cloudTaskNeedsRefresh(job) : ["queued", "running"].includes(job.status)).map((job) => job.id));
 
-  const signature = JSON.stringify(items.map((job) => [job.id, job.status, job.output, job.localPath, job.archiveError, job.output_available, job.mode, job.resolution, job.duration, job.steps, job.seed, job.elapsed_seconds, job.message, job.resolution_adjustment, job.prompt, upscaleRecord(job.id)]));
+  const signature = JSON.stringify(items.map((job) => [job.id, job.status, job.phase, job.upload?.phase, job.output, job.localPath, job.archiveError, job.output_available, job.mode, job.resolution, job.duration, job.steps, job.seed, job.elapsed_seconds, job.message, job.resolution_adjustment, job.prompt, upscaleRecord(job.id)]));
   const active = items.filter((job) => job.cloud ? !['done','failed','error','canceled','cancelled'].includes(job.status) : ["queued", "running"].includes(job.status)).length;
   if (!["overview", "workbench"].includes(runtime.page)) return;
   qs(".task-count").textContent = active ? String(active) : "";
@@ -1336,7 +1341,7 @@ function renderTaskItems(items) {
   const previous = new Map([...list.children].map((card) => [card.dataset.jobId, card]));
   const cards = [];
   for (const job of (runtime.page === "workbench" ? items : [])) {
-    const cardSignature = JSON.stringify([job.id, job.status, job.output, job.localPath, job.archiveError, job.output_available, job.mode, job.resolution, job.duration, job.steps, job.seed, job.elapsed_seconds, job.message, job.resolution_adjustment, job.prompt, upscaleRecord(job.id)]);
+    const cardSignature = JSON.stringify([job.id, job.status, job.phase, job.upload?.phase, job.output, job.localPath, job.archiveError, job.output_available, job.mode, job.resolution, job.duration, job.steps, job.seed, job.elapsed_seconds, job.message, job.resolution_adjustment, job.prompt, upscaleRecord(job.id)]);
     const old = previous.get(job.id);
     if (old?.dataset.signature === cardSignature) { cards.push(old); previous.delete(job.id); continue; }
     const card = document.createElement("article");
@@ -1368,7 +1373,7 @@ function renderTaskItems(items) {
     } else if (job.status === "done" && job.output) {
       thumbnail.textContent = "文件缺失";
     } else {
-      thumbnail.textContent = job.status === "running" ? "生成中" : job.status === "queued" ? "排队" : "--";
+      thumbnail.textContent = taskStatusLabel(job);
     }
     const copy = document.createElement("div");
     const title = document.createElement("strong");
@@ -1443,14 +1448,14 @@ function renderTaskItems(items) {
     });
     const outputAvailable = Boolean(job.output) && job.output_available !== false;
     const missingOutput = job.status === "done" && job.output && !outputAvailable;
-    const status = missingOutput ? "文件缺失" : job.status === "done" ? "已完成" : job.status === "running" ? "生成中" : job.status === "queued" ? "排队中" : job.status === 'canceled' ? '已取消' : "失败";
+    const status = missingOutput ? "文件缺失" : taskStatusLabel(job);
     const thumbnail = document.createElement("div");
     thumbnail.className = "activity-thumb";
     if (outputAvailable) thumbnail.append(createThumbnail(job));
     else {
       const label = document.createElement("span");
       label.className = "activity-thumb-label";
-      label.textContent = missingOutput ? "文件缺失" : job.status === "running" ? "生成中" : "任务";
+      label.textContent = missingOutput ? "文件缺失" : taskStatusLabel(job);
       thumbnail.append(label);
     }
     const copy = document.createElement("div");
@@ -1504,6 +1509,17 @@ function updateCurrentTask(items) {
 }
 
 function showTaskInPreview(job) {
+  if (job.pendingSubmission && job.upload?.phase === 'failed' && ['error','failed'].includes(job.status)) {
+    setPreview('素材上传失败',job.error || job.upload.error,0,{jobId:job.id,job});
+    return;
+  }
+  if (job.pendingSubmission && job.upload && ['queued','running'].includes(job.status)) {
+    const transfer = job.upload;
+    setPreview(transfer.phase === 'uploading' ? '正在上传素材' : '上传完成，准备生成',
+      uploadText(transfer), transfer.percent, {loading:true,jobId:job.id,job,tip:'素材接收确认后进入生成队列'});
+    qs('.preview-sampling-label').textContent = transfer.total ? Math.floor(transfer.percent) + '%' : '';
+    return;
+  }
   if (job.status === 'done' && job.output && job.output_available !== false) {
     playTaskInPreview(job);
   } else if (job.status === 'done' && job.output) {
@@ -1868,6 +1884,10 @@ async function editSelectedWork() {
 }
 
 function taskStatusLabel(job) {
+  if (job.pendingSubmission && job.status === 'running') {
+    if (job.upload) return job.upload.phase === 'uploading' ? '上传素材' : '等待素材确认';
+    if (job.phase === 'submitting') return '正在提交';
+  }
   if (job.phase === 'prompt' && job.status === 'running') return '准备提示词';
   if (job.status === "done" && job.output && job.output_available === false) return "文件缺失";
   return ({ queued: "排队中", running: "生成中", done: "已完成", failed: "失败", error: "失败", canceled: "已取消", cancelled: "已取消" })[job.status] || job.status || "未知";
@@ -3355,7 +3375,12 @@ async function restoreBrowserImageReference() {
 const settingsStartup = restoreSavedVideoState().then(refreshPersonalIdentity).then(loadPerformanceSettings);
 const taskStartup = settingsStartup.then(loadConfig).then(restoreBrowserImageReference)
   .catch(error => {qs('.preflight-state').textContent=cloudErrorText(error);})
-  .then(async()=>{taskStateReady=true;renderCachedTasks();await submissionQueue.reconcile(savedCloudTasks(true));await submissionQueue.start();await refreshCloudBalance().catch(()=>{});});
+  .then(()=>{
+    taskStateReady=true;renderCachedTasks();
+    submissionQueue.reconcile(savedCloudTasks(true)).then(()=>submissionQueue.start())
+      .catch(error=>{qs('.workbench-subtitle').textContent='后台提交队列暂不可用：'+(error.message||error);});
+    refreshCloudBalance().catch(()=>{});
+  });
 const overviewPoller = createPoller(refreshOverview, () => runtime.page === "overview" ? 5000 : 15000);
 const tasksPoller = createPoller(async()=>{
   if(!taskStateReady)return;
@@ -3373,7 +3398,12 @@ document.addEventListener("visibilitychange", () => {
   else pollers.forEach((poller) => poller.wake());
 });
 qsa(".dock button[data-target], .goto-workbench, .goto-works, .goto-settings").forEach((button) => button.addEventListener("click", () => { worksPoller.wake(); statsPoller.wake(); }));
-taskStartup.then(()=>pollers.forEach((poller) => poller.wake()));
+if (window.MinimaxBrowser) [overviewPoller,worksPoller,statsPoller].forEach(poller=>poller.wake());
+taskStartup.then(()=>pollers.forEach((poller) => poller.wake()))
+  .catch(error=>{
+    qs('.workbench-subtitle').textContent='任务初始化失败：'+(error.message||error);
+    [overviewPoller,worksPoller,statsPoller].forEach(poller=>poller.wake());
+  });
 
 qsa('[data-quick-mode]').forEach(button => button.addEventListener('click', () => assetPicker.setMode(button.dataset.quickMode)));
 intercept(qs('.quick-open-output'), () => isNode() ? showPage('works') : invoke('open_generated_directory'));

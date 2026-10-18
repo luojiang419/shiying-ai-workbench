@@ -8,11 +8,11 @@
 <small>在当前实例的终端执行下面的命令，复制显示的管理码：</small>
 <code>cd /root/minimax-node &amp;&amp; venv/bin/python -m app.public_release admin-code</code>
 <label for="key">DeepSeek API Key</label><input id="key" type="password" required autocomplete="off" spellcheck="false" placeholder="输入你的 DeepSeek API Key">
-<small>接口地址固定为 https://api.deepseek.com/v1。保存前会发起一次 Flash 验证请求，调用费用由你的 DeepSeek 账户承担。</small>
+<small>接口地址固定为 https://api.deepseek.com/v1。验证后会将 Flash 设为首选并保留其他助手。验证请求的费用由你的 DeepSeek 账户承担。</small>
 <button id="save" type="submit">验证并保存</button><div id="status" class="status" role="status"></div>
 </form></section><a class="back" href="/">返回工作台 →</a><p class="footer">当前公开版提供 H3 视频创作与人物克隆。Built with MiniMax H3。使用须遵守 <a href="/api/public-release/license" target="_blank" rel="noopener">MiniMax H3 许可与使用限制</a>。</p></main>
 <script>
 const $=id=>document.getElementById(id);
-fetch('/api/public-release',{cache:'no-store'}).then(r=>r.json()).then(d=>{$('configured').textContent=d.assistantConfigured?'已配置 Flash。如需更换 Key，请验证后保存。':'首次使用：请先配置 Flash，再开始克隆创作。';}).catch(()=>{$('configured').textContent='配置状态读取失败，请刷新重试。';});
+fetch('/api/public-release',{cache:'no-store'}).then(r=>r.json()).then(d=>{$('configured').textContent=d.assistantConfigured?`当前已配置 ${d.assistantModel||'AI 助手'}。如需启用或更换 Flash Key，请验证后保存。`:'首次使用：请先配置 Flash，再开始克隆创作。';}).catch(()=>{$('configured').textContent='配置状态读取失败，请刷新重试。';});
 $('form').onsubmit=async event=>{event.preventDefault();$('save').disabled=true;$('status').className='status';$('status').textContent='正在验证 Flash，请稍候…';try{const response=await fetch('/api/public-release/assistant',{method:'POST',headers:{'Content-Type':'application/json','X-Shiying-Admin-Code':$('admin').value.trim()},body:JSON.stringify({apiKey:$('key').value.trim()})});const data=await response.json();if(!response.ok)throw Error(data.detail||'配置未成功，请重试');$('key').value='';$('admin').value='';$('configured').textContent='已配置 DeepSeek Flash';$('status').textContent='验证成功，已保存。现在可以返回工作台开始创作。';}catch(error){$('status').className='status error';$('status').textContent=error.message;}finally{$('save').disabled=false;}};
 </script></body></html>

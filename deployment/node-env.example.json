@@ -1,5 +1,7 @@
 {
   "MINIMAX_COMFY_DIR": "/root/minimax-comfy",
+  "MINIMAX_COMFY_PYTHON": "/root/miniconda3/bin/python",
+  "MINIMAX_MANAGED_NODE": "1",
   "MINIMAX_COMFY_INPUT_DIR": "/root/minimax-comfy/input",
   "MINIMAX_COMFY_OUTPUT_DIR": "/root/minimax-comfy/output",
   "MINIMAX_COMFY_HOST": "127.0.0.1",

@@ -15,6 +15,7 @@ if (ROOT/'public-web').is_dir():
     config.WEB_DIR = ROOT/'public-web'
 server = import_module('app.server')
 app = server.app
+app.title = '诗影 AI 工作台'
 # 图片生成及其旧别名均不进入本次视频/克隆公开版。
 app.router.routes[:] = [route for route in app.router.routes
     if getattr(getattr(route, 'endpoint', None), '__module__', '') not in {
@@ -52,9 +53,11 @@ def bootstrap(request: Request):
     from .upscale_settings import load_upscale_settings
     upscale = load_upscale_settings(ROOT)
     providers = []
-    if load_assistant_providers():
-        providers = [{'id':'server-managed','name':'DeepSeek Flash','defaultModel':'deepseek-flash',
-                      'models':['deepseek-flash'],'baseUrl':str(request.base_url).rstrip('/'),
+    configured=load_assistant_providers()
+    if configured:
+        model=configured[0]['defaultModel']
+        providers = [{'id':'server-managed','name':'节点 AI 助手','defaultModel':model,
+                      'models':[model],'baseUrl':str(request.base_url).rstrip('/'),
                       'enabled':True,'serverManaged':True}]
     return {'settings':panel_settings(),'providers':providers,'canManage':False,
             'version':read_json(ROOT/'web/studio/version.json',{}).get('version','0.4.138'),

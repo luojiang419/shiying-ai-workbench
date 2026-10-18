@@ -23,6 +23,13 @@ def test_owner_code_survives_restart_but_rotates_for_new_instance(tmp_path):
     assert enabled(root)
 
 
+def test_public_depth_base_is_blocked_before_dependency_download(tmp_path):
+    from app.clone_depth_runtime import prepare_depth
+    root=release_root(tmp_path)
+    with pytest.raises(ValueError,match='非商业授权'):
+        prepare_depth(root,model='base')
+
+
 def test_flash_verified_before_persisting_and_no_plaintext_key(tmp_path):
     root=release_root(tmp_path)
     key='sk-public-test-only-12345'
@@ -37,6 +44,16 @@ def test_flash_verified_before_persisting_and_no_plaintext_key(tmp_path):
     with pytest.raises(ValueError,match='验证失败'):
         configure_flash(root,'sk-invalid-key-value',lambda *_:(_ for _ in ()).throw(RuntimeError('private detail')))
     assert (root/'config/assistant-providers.json').read_text(encoding='utf-8')==before
+
+
+def test_quick_flash_setup_preserves_other_owner_providers(tmp_path):
+    root=release_root(tmp_path)
+    other={'id':'another-provider','encryptedKey':'existing-encrypted-value','enabled':False}
+    (root/'config/assistant-providers.json').write_text(json.dumps([other]))
+    configure_flash(root,'sk-public-test-only-12345',lambda *_:None)
+    providers=json.loads((root/'config/assistant-providers.json').read_text(encoding='utf-8'))
+    assert providers[0]['id']=='deepseek-flash'
+    assert providers[1]==other
 
 
 def test_setup_needs_owner_code_and_same_origin_without_disclosing_credentials(tmp_path,monkeypatch):

@@ -1,0 +1,8 @@
+-r ../requirements.txt
+-r ../requirements-image.txt
+onnxruntime==1.31.0
+spandrel==0.4.2
+easydict==1.13
+opencv-python>=4.10,<5
+cryptography==49.0.0
+supervisor==4.3.0

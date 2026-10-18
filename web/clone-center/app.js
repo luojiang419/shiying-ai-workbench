@@ -1,3 +1,4 @@
+import {bindFileDrop,uploadJson,createUploadPanel} from './media-upload.js';
 import {cloudErrorText} from '../cloud-error-zh.js';
 import { lightweightSourcePrompt } from './cloud-source-prompt.js';
 import { bindResolutionSelectors } from '../resolution-selectors.js';
@@ -221,24 +222,17 @@ const post = (path, data) =>
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-async function upload(file, kind) {
+async function upload(file, kind, options = {}) {
   if (nativeMaterials && isCloudEngine()) return saveNativeMaterial(file, kind);
-  const endpoint = API;
   const body = new FormData();
-  body.append("file", file);
-  body.append("kind", kind);
-  let response;
-  try {
-    response = await fetch(endpoint + '/api/clone/assets', {method:'POST', body, cache:'no-store'});
-  } catch {
-    throw new Error(`无法连接素材上传服务（${endpoint}），请检查后端服务与网络连接后重试。`);
+  body.append('file', file);
+  body.append('kind', kind);
+  const track = uploadPanel.watch(file.name);
+  const data = await uploadJson(API + '/api/clone/assets', {body,signal:options.signal,onProgress:track});
+  if (!data?.id) {
+    track({phase:'failed',error:'素材上传服务未返回素材编号，请检查服务地址与版本'});
+    throw new Error('素材上传服务未返回素材编号，请检查服务地址与版本');
   }
-  const data = await response.json().catch(() => null);
-  if (!response.ok) {
-    const detail = typeof data?.detail === 'string' ? data.detail : '';
-    throw new Error(detail || `素材上传失败（HTTP ${response.status}，${endpoint}），请检查服务连接后重试。`);
-  }
-  if (!data?.id) throw new Error(`素材上传服务未返回素材编号（${endpoint}），请检查服务地址与版本。`);
   return data;
 }
 
@@ -246,6 +240,8 @@ async function upload(file, kind) {
 const processing = document.querySelector(".processing");
 $("dropzone").append(processing);
 processing.hidden = true;
+const uploadPanel = createUploadPanel($("dropzone"));
+let sourceUploadController;
 const state = {
   materialWorkflow: true,
   materials: [],
@@ -296,6 +292,8 @@ const state = {
 const positionNames = ["左侧", "中间", "右侧"];
 const positionEn = { 左侧: "left", 中间: "center", 右侧: "right" };
 function clearCreationInput() {
+  sourceUploadController?.abort();
+  uploadPanel.clear();
   const urls = [state.url, state.backgroundImage?.url, ...state.materials.map(item => item.url),
     ...state.people.flatMap(person => person.images.map(item => item.url))];
   state.clearedProcessingEpoch = state.epoch;
@@ -917,6 +915,8 @@ $('lightweightPromptClose').onclick = () => $('lightweightPromptDialog').close()
 $('cloudSceneOpen').onclick = () => $('cloudSceneDialog').showModal();
 $('cloudSceneClose').onclick = () => $('cloudSceneDialog').close();
 function loadVideo(url, name, sample = false, restoreRange = null) {
+  sourceUploadController?.abort();
+  uploadPanel.clear();
   invalidateRegion(true);
   const preferredResolution = $("resolution").value || state.desiredResolution;
   state.sourceId = null;
@@ -1150,11 +1150,12 @@ async function importVideo(file) {
   await uploadSourceVideo(file, state.sourceToken);
 }
 async function uploadSourceVideo(file, token) {
+  const controller = sourceUploadController = new AbortController();
   state.sourceUploading = true;
   state.sourceUploadError = '';
   update();
   try {
-    const asset = await upload(file, "video");
+    const asset = await upload(file, "video", {signal:controller.signal});
     if (token !== state.sourceToken) return;
     state.sourceId = asset.id;
     if (state.materialWorkflow) renderMaterials();
@@ -1208,19 +1209,18 @@ $("videoFile").onchange = (e) => {
   importVideo(e.target.files[0]);
   e.target.value = "";
 };
-for (const id of ["dropzone", "uploadVideo"]) {
-  const el = $(id);
-  el.ondragover = (e) => {
-    e.preventDefault();
-    el.classList.add("dragover");
-  };
-  el.ondragleave = () => el.classList.remove("dragover");
-  el.ondrop = (e) => {
-    e.preventDefault();
-    el.classList.remove("dragover");
-    importVideo(e.dataTransfer.files[0]);
-  };
-}
+bindFileDrop($('uploadVideo'), files => importVideo(files[0]));
+bindFileDrop($('dropzone'), files => {
+  const videos = files.filter(file=>file.type.startsWith('video/') || /\.(mp4|webm|mov|m4v)$/i.test(file.name));
+  if (videos.length) importVideo(videos[0]);
+  const pictures = files.filter(isImageFile);
+  if (pictures.length) {
+    if (state.materialWorkflow) importMaterials(pictures);
+    else if (state.people.length) importPersonImages(activeSlot || 0,pictures);
+    else toast('请先选择人物模式再添加参考图片');
+  }
+  if (!videos.length && !pictures.length) toast('请选择视频或图片文件');
+});
 
 $("peopleMode").onclick = () => $("modeDialog").showModal();
 function chooseMode(mode) {
@@ -1537,21 +1537,7 @@ function isImageFile(file) {
   return file.type.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(file.name);
 }
 function bindImageDrop(element, receive) {
-  element.addEventListener('dragover', (event) => {
-    if (!event.dataTransfer?.types?.includes('Files')) return;
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-    element.classList.add('dragover');
-  });
-  element.addEventListener('dragleave', (event) => {
-    if (!element.contains(event.relatedTarget)) element.classList.remove('dragover');
-  });
-  element.addEventListener('drop', (event) => {
-    event.preventDefault();
-    element.classList.remove('dragover');
-    const files = Array.from(event.dataTransfer?.files || []);
-    if (files.length) receive(files);
-  });
+  bindFileDrop(element,receive);
 }
 async function importPersonImages(index, droppedFiles) {
   const p = state.people[index];
@@ -1960,6 +1946,7 @@ $("generate").onclick = async () => {
   if (isCloudEngine() && !$('cloudDuration').reportValidity()) return;
   if (!isCloudEngine() && !$('steps').reportValidity()) return;
   if (!isCloudEngine() && usesDepthReference() && !$('controlStrength').reportValidity()) return;
+  uploadPanel.clear();
   submittingGeneration = true;
   const sourceToken = state.sourceToken;
   const editingJobId = state.editingJobId;
@@ -2053,6 +2040,7 @@ $('copyFailure').onclick=async()=>{
   catch{$('copyFailure').textContent='请手动选择文字复制';}
 };
 function showRunningJob(job) {
+  uploadPanel.clear();
   state.selectedJobId = job.id;
   state.generationSelectionExplicit = true;
   sourceView();

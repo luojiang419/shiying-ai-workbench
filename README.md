@@ -1,8 +1,8 @@
 # 诗影 AI 工作台
 
-视频创作与素材克隆的一体化网页工作台。**Built with MiniMax H3**。
+视频创作与素材克隆的一体化网页工作台。**Powered by MiniMax H3**。
 
-![诗影 AI 工作台](docs/cover.svg)
+![诗影 AI 工作台](docs/cover.png)
 
 ## 功能
 
@@ -29,6 +29,8 @@
 
 Key 加密保存在本实例后端目录，服务重启可继续使用。管理码随新实例更新。发行镜像不携带发布者的个人 Key、私人监控凭据或用户任务；默认不向发布者服务器上报节点信息。
 
+桌面工作台连接本算力节点时，提示词优化由节点助手配置执行，不会自动继承桌面的本地助手 Key。
+
 ## 运行环境
 
 - NVIDIA GPU、Linux、AutoDL 应用端口 6008；后端 API 7890、ComfyUI 8188 均在本机通信。
@@ -52,6 +54,13 @@ bash /root/zealman-app/scripts/improved-autostart.sh
 ```
 
 从任意空白 Linux 直接安装时，还需先准备匹配的 CUDA/PyTorch、ComfyUI、系统工具和模型存储。本源码包不包含这些大型运行环境。完整 H3 依赖快照与自动补齐逻辑保留在 `scripts/h3-dependencies.json` 和 `app/h3_dependencies.py`。
+
+镜像中的旧路径是兼容启动入口，内部调用本项目启动脚本；网关已使用自身锁定的 npm 依赖，不依赖旧底座应用代码。可运行只读环境验收：
+
+```bash
+cd /root/minimax-node
+venv/bin/python scripts/public_smoke_check.py --factory
+```
 
 重新制作公开镜像前，请按 [镜像发布说明](docs/发布说明.md) 清理个人配置与测试数据。
 

@@ -1,6 +1,7 @@
 {
-  "index.html": "c4b4b8bf693fbb0d26b0655c221311463fbe051ad1bb6c18ce0557870472f78f",
-  "studio/assets.js": "5f5c97b250a400e512c223052e05a1a79fb7f27dd8cbf7060decc5eef7c3f4db",
+  "clone-center/media-upload.js": "b1f01ab399f00fe6766922be980e66b1214da6c286ac2f944472000cb394fdcf",
+  "index.html": "6270b3de5711b1bd833d3f6f13de6ee3b88a5c34546a20c84df00c4eb2ac8afa",
+  "studio/assets.js": "cfe09d9af5b90562713c613b29e2896caed672e4068450d95b67e45bb6dc3288",
   "studio/assistant-chat.js": "4c67a269035f68982b1801a04d9eb70ff418578ec65613d871378e7629faff25",
   "studio/assistant-providers.js": "90b14ab0d90e9aa545a3e3abc8face7e4912b4231edf42882542b2ce611cfcb5",
   "studio/clone-center/cloud-source-prompt.js": "0d7e7e302bfbe67d9de7b32702bc3ebdd9366acf91c6d5dfff1797bb98ea3682",
@@ -11,9 +12,10 @@
   "studio/cloud-h3.js": "70da4807199d0a5db57c09104ca9c3694eeb2b0089777231913bc9c399e231b7",
   "studio/cloud-scope.js": "5499cadefecb20d72088345ec16fc980f6da7eaa1211adda3742d0579dd37dc9",
   "studio/compute-node.js": "61448b27b4e3e39752a4891f58792549be6923fec07d8354bf74e2725307133c",
-  "studio/demo-runtime.js": "84568a3c197915a63b1f52d751124a4ed3ecc7d453dfbfd93d07a514cd97eaf7",
-  "studio/generation-eta.js": "36d76292384d19451f285c92ad86983dec2fae088eef540b99b14e2affbf0928",
+  "studio/demo-runtime.js": "8300cc532e5b6ec311b6e89299935e0991f98893a651488572793e9022f546c3",
+  "studio/generation-eta.js": "f5e9d6c38bfc0f5719b3a164e5da7699aaa32e272af549a803ef8bf31349cf4e",
   "studio/generation-service.js": "ae7604a273ef81c5b5233f21d0ec2c99eb9ba928214297b084e3acffc6c29987",
+  "studio/media-upload.js": "b1f01ab399f00fe6766922be980e66b1214da6c286ac2f944472000cb394fdcf",
   "studio/motion.css": "329709f2f8dd611962cc9a98cba7d03876b54f6cf182ec7b152b9d54e14aff00",
   "studio/motion.js": "01819c8315dbd435d830db95f773dc9b1ff1435db264dfe096f731f7c2bfe52d",
   "studio/performance.js": "fa837d518160cb8fdb965e784560514382fb7aa13163bf7273401754082ec069",
@@ -24,11 +26,11 @@
   "studio/references.js": "6a80b5103179cc8b5183c5c84d3eb27ca66595326124622c7b3f2d3857d52748",
   "studio/remote-tasks.js": "871580466f1fdbe0b55d4931d9eacfc6812b088356b8454667a2acb700e34bc3",
   "studio/resolution-selectors.js": "3e582d6de724c2b479ebf5d31530fdecde63e8d778145e1074ec6fc2c25006a8",
-  "studio/submission-queue.js": "3dba6fafbfc2deeb1fe631475442026308246cd7489d64ea5182ef23a83dc092",
+  "studio/submission-queue.js": "109762b82fe1755a0da6a265eb404390e732956347ad2fa7a15bc9ebc1e352b4",
   "studio/task-cleanup.js": "d3b9450485e87dcbc96a92aea85053447bc257893be67cc7d5681257df1b4d15",
   "studio/upscale-records.js": "e3b1d388948e8062a0fac11e39232082242d23bc675c04bf868da89c5ea9c23e",
   "studio/upscale-settings.js": "2ee919aa9bf473542347283dd45f392c3721bc8587ddf3bc528451a802c02c2e",
   "studio/version.json": "e6d83c142ab115485bd236f853cb0391ee78d977e3d96247b5454449446f4573",
-  "public-setup.html": "239a65dade6a1006287417ad8ccaec0afb7dc77527a22d4f2a90491511b96af3",
-  "public-release.js": "e865c578947c50593c12d75feda780bf1a9b2b9e6fa11cf116cdb4f399bdb9ea"
+  "public-setup.html": "c6b034703c598fa0049138f2a6322a6e46d830bf0e537bc848ef4e23e7638887",
+  "public-release.js": "c6cf9e46b440d0b93876cdeef0acd6543d93b71ace05072a5e87e0c736d46265"
 }

@@ -6,20 +6,21 @@ if (response.ok) {
   const root = document.querySelector('#minimax-plan');
   root.dataset.publicEdition = 'video-clone';
   const style = document.createElement('style');
-  style.textContent = '#minimax-plan [data-target="image"],#minimax-plan [data-page="image"],#minimax-plan [data-target="settings"],#minimax-plan [data-page="settings"]{display:none!important}.public-onboarding{padding:16px 20px;border:1px solid var(--mm-line);border-radius:12px;margin:12px 0 22px;color:var(--mm-text);line-height:1.8}.public-onboarding a{color:var(--mm-accent,#a8e6cb);margin-left:12px}.public-credit{font-size:12px;opacity:.65;margin-top:8px}';
+  style.textContent = '#minimax-plan [data-target="image"],#minimax-plan [data-page="image"],#minimax-plan [data-target="settings"],#minimax-plan [data-page="settings"]{display:none!important}.public-onboarding{padding:16px 20px;border:1px solid var(--mm-line);border-radius:12px;margin:12px 0 22px;color:var(--mm-text);line-height:1.8;overflow-wrap:anywhere}.public-onboarding a{color:var(--mm-accent,#a8e6cb);margin-left:12px}.public-credit{font-size:12px;opacity:.65;margin-top:8px}';
   document.head.append(style);
   const brand = root.querySelector('.brand');
   if (brand) {
     const name=brand.querySelector('span:not(.brand-mark):not(.brand-version)');if(name)name.textContent=edition.brand;
-    const attribution=document.createElement('span');attribution.textContent='MiniMax H3';attribution.style.cssText='font-size:12px;opacity:.7';brand.append(attribution);
+    brand.style.position='relative';
+    const attribution=document.createElement('span');attribution.textContent='Powered by MiniMax H3';attribution.style.cssText='position:absolute;top:100%;left:44px;font-size:10px;line-height:1.3;opacity:.7;white-space:nowrap';brand.append(attribution);
   }
   const mark = root.querySelector('.brand-mark');if(mark)mark.textContent='诗';
   const home = root.querySelector('[data-page="overview"]');
   if (home) {
     const card=document.createElement('div');card.className='public-onboarding';
-    card.append(document.createTextNode(edition.assistantConfigured?'DeepSeek Flash 已配置':'首次使用请配置你自己的 DeepSeek Flash Key'));
+    card.append(document.createTextNode(edition.assistantConfigured?`AI 助手已配置（${edition.assistantModel||'当前模型'}）`:'首次使用请配置你自己的 DeepSeek Flash Key'));
     const setup=document.createElement('a');setup.href='/setup/';setup.textContent='AI 助手配置 →';card.append(setup);
-    const credit=document.createElement('div');credit.className='public-credit';credit.textContent='视频创作 · 人物克隆 · Built with MiniMax H3';card.append(credit);
+    const credit=document.createElement('div');credit.className='public-credit';credit.textContent='视频创作 · 人物克隆 · Powered by MiniMax H3';card.append(credit);
     home.prepend(card);
   }
 }

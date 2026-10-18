@@ -9,6 +9,8 @@ export class SubmissionQueue {
     this.items = [];
     this.busy = false;
     this.ready = this.open();
+    // 无队列锁的窗口仍可浏览；真正提交时保留 ready 的错误，避免重复任务。
+    this.ready.catch(() => {});
   }
 
   async open() {
@@ -120,6 +122,11 @@ export class SubmissionQueue {
               Object.assign(item, {phase:'submitting', message:'正在上传素材并提交生成'});
               await this.write(item);
               this.changed();
+            },
+            progress:stats => {
+              if (item.status === 'canceled') return;
+              Object.assign(item,{upload:stats,phase:stats.phase === 'uploading' ? 'uploading' : 'submitting'});
+              this.progressed?.(this.rows().find(row=>row.id===item.id));
             },
           });
           await this.submitted(item, result);

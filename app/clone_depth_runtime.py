@@ -294,6 +294,9 @@ def prepare_depth(root, model="small", remove_background=False, emit=lambda *_: 
     root = Path(root)
     if model not in DEPTH_MODELS:
         raise ValueError("深度模型无效")
+    from .public_release import enabled as public_release_enabled
+    if model == 'base' and public_release_enabled(root):
+        raise ValueError('公开版不提供非商业授权的 Base 深度模型，请使用 Small 模型')
     if person_mask_model not in {"lite", "quality"}:
         raise ValueError("人物分割档位无效")
     lock = InterProcessLock(root / "runtime/clone-depth-install.lock", 1)

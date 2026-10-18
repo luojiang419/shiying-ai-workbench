@@ -1,0 +1,6 @@
+# 透明背景运行时优先使用 scripts/qwen21-background-dependencies.json 自动补齐。
+# 以下只用于开发环境；发行版不要求用户手动 pip，且不重装 torch / torchvision。
+timm==1.0.27
+transformers==5.14.1
+einops==0.8.2
+kornia==0.8.3

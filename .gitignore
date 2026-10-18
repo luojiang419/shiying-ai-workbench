@@ -10,6 +10,7 @@ logs/
 models/
 vendor/
 venv/
+node_modules/
 public-web/
 __pycache__/
 *.pyc
